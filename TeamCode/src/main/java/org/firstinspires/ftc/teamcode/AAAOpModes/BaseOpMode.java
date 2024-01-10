@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.AAAOpModes;
 
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -177,5 +178,9 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     public static void updateControllers(){
         driver1.update(); driver2.update();
+    }
+
+    public static HardwareMap getHardwareMap(){
+        return hardware;
     }
 }

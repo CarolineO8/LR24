@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.AAAOpModes.BaseOpMode;
@@ -52,14 +51,6 @@ public class Drivetrain extends Subsystem{
        /* drive = gamepad1.right_stick_y;
         strafe = gamepad1.right_stick_x;
         turn = gamepad1.left_stick_x;*/
-
-        Vector2d driveVector = new Vector2d(strafe,drive);
-        Vector2d rotatedVector = driveVector.rotateBy(Math.toDegrees(-gyro.getHeading()));
-
-        BaseOpMode.addData("Heading", gyro.getHeading());
-
-        drive=rotatedVector.getY();
-        strafe=-(rotatedVector.getX());
 
 
         motorfl.setPower(-(drive-strafe+turn));
