@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp;
 
+import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.derivative;
+import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.integral;
+import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.proportional;
+
 import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -33,7 +37,7 @@ public class CompTeleOp extends BaseOpMode {
         br = BaseOpMode.hardware.get(DcMotor.class,"br");
         bl = BaseOpMode.hardware.get(DcMotor.class,"bl");
         gyro = new Gyro("imu");
-        pid = new PID(0,0,0);
+        pid = new PID(proportional,integral,derivative);
 
 
     }
@@ -44,7 +48,7 @@ public class CompTeleOp extends BaseOpMode {
         double drive = driver1.leftStick.Y();
         double strafe = driver1.leftStick.X();
         double turn = driver1.rightStick.X();
-        double speed = 0.5;
+        double speed = 0.8;
 
         Vector2d driveVector = new Vector2d(strafe, drive);
         Vector2d rotatedVector = driveVector.rotateBy(Math.toDegrees(270-gyro.getHeading()));
@@ -55,18 +59,30 @@ public class CompTeleOp extends BaseOpMode {
 
 
         //TODO PID STUFF
+        //assigns the current rate of change variable to the speed of rotation
         double currentRateOfChange = gyro.getRateOfChange();
+        //turns PID off when turning
         if (turn != 0){ pid_on = false;}
-        else if (currentRateOfChange <= 120) pid_on = true;
-
+        //when the speed of rotation is less then 120 than turn PID on.
+        else if (Math.abs(currentRateOfChange) <= 120) pid_on = true;
+        //if PID is on and not on last cycle then
         if (pid_on && !pid_on_last_cycle) {
             setPoint = gyro.getHeading();
-        }else if (pid_on){
+        }
+        //if PID is on and on last cycle then it corrects it.
+        else if (pid_on){
             turn = pid.getCorrection(gyro.getHeading(), setPoint);
         }
-        pid.setConstants(0,0,0);
+        //sets gain
+        pid.setConstants(proportional,integral,derivative);
         pid_on_last_cycle = pid_on;
 
+        if (driver1.leftBumper.isPressed()) {
+            speed = 0.2;
+        }
+        else if (driver1.leftTrigger.isPressed()) {
+            speed = 0.4;
+        }
 
         fl.setPower(-(drive - strafe + turn) * speed);
         fr.setPower((drive + strafe - turn) * speed);
