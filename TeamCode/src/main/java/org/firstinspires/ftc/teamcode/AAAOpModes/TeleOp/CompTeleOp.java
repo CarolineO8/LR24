@@ -35,7 +35,7 @@ public class CompTeleOp extends BaseOpMode {
         double drive = driver1.leftStick.Y();
         double strafe = driver1.leftStick.X();
         double turn = driver1.rightStick.X();
-        double speed = 0.5;
+        double speed = 0.7;
 
         Vector2d driveVector = new Vector2d(strafe, drive);
         Vector2d rotatedVector = driveVector.rotateBy(Math.toDegrees(270-gyro.getHeading()));
@@ -43,6 +43,13 @@ public class CompTeleOp extends BaseOpMode {
 
         drive = rotatedVector.getY();
         strafe = -rotatedVector.getX();
+
+        if (driver1.leftBumper.isPressed()) {
+            speed = 0.2;
+        }
+        else if (driver1.leftTrigger.isPressed()) {
+            speed = 0.4;
+        }
 
         fl.setPower(-(drive - strafe + turn) * speed);
         fr.setPower((drive + strafe - turn) * speed);
