@@ -18,6 +18,8 @@ public class Gyro {
     private double wrappedHeading = 0;
     private double rawHeading = 0;
     private double offset = 0;
+    double previousTime = 0;
+    double previousChange = 0;
 
     public Gyro(String name){
         gyros.add(this);
@@ -40,6 +42,16 @@ public class Gyro {
     public void setCurrentHeading(double heading){
         resetHeading();
         offset -= heading;
+    }
+
+    public double getRateOfChange(){
+        double change = getHeading();
+        double deltaTime = (System.currentTimeMillis() - previousTime) / 1000.0;
+        double deltaChange = change - previousChange;
+        double rateOfChange = deltaChange/deltaTime;
+        previousTime = System.currentTimeMillis();
+        previousChange = change;
+        return Math.abs(rateOfChange);
     }
 
     public static void updateAngles(){
