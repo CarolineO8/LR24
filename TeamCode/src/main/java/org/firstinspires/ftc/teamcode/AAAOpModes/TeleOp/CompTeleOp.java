@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.AAAOpModes.BaseOpMode;
+import org.firstinspires.ftc.teamcode.zLibraries.Utilities.Control.PID;
 import org.firstinspires.ftc.teamcode.zLibraries.Utilities.HardwareDevices.Gyro;
 
 //@Disabled
@@ -17,6 +18,13 @@ public class CompTeleOp extends BaseOpMode {
     DcMotor br;
     Gyro gyro;
 
+    PID pid;
+
+
+    boolean pid_on = false;
+    boolean pid_on_last_cycle = false;
+    double setPoint = 0;
+
     @Override
     public void externalInit() {
         //On init
@@ -25,6 +33,7 @@ public class CompTeleOp extends BaseOpMode {
         br = BaseOpMode.hardware.get(DcMotor.class,"br");
         bl = BaseOpMode.hardware.get(DcMotor.class,"bl");
         gyro = new Gyro("imu");
+        pid = new PID(0,0,0);
 
 
     }
@@ -35,7 +44,7 @@ public class CompTeleOp extends BaseOpMode {
         double drive = driver1.leftStick.Y();
         double strafe = driver1.leftStick.X();
         double turn = driver1.rightStick.X();
-        double speed = 0.7;
+        double speed = 0.5;
 
         Vector2d driveVector = new Vector2d(strafe, drive);
         Vector2d rotatedVector = driveVector.rotateBy(Math.toDegrees(270-gyro.getHeading()));
@@ -44,12 +53,20 @@ public class CompTeleOp extends BaseOpMode {
         drive = rotatedVector.getY();
         strafe = -rotatedVector.getX();
 
-        if (driver1.leftBumper.isPressed()) {
-            speed = 0.2;
+
+        //TODO PID STUFF
+        double currentRateOfChange = gyro.getRateOfChange();
+        if (turn != 0){ pid_on = false;}
+        else if (currentRateOfChange <= 120) pid_on = true;
+
+        if (pid_on && !pid_on_last_cycle) {
+            setPoint = gyro.getHeading();
+        }else if (pid_on){
+            turn = pid.getCorrection(gyro.getHeading(), setPoint);
         }
-        else if (driver1.leftTrigger.isPressed()) {
-            speed = 0.4;
-        }
+        pid.setConstants(0,0,0);
+        pid_on_last_cycle = pid_on;
+
 
         fl.setPower(-(drive - strafe + turn) * speed);
         fr.setPower((drive + strafe - turn) * speed);
