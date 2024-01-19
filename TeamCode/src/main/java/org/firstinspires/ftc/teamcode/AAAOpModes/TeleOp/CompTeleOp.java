@@ -48,7 +48,7 @@ public class CompTeleOp extends BaseOpMode {
         double drive = driver1.leftStick.Y();
         double strafe = driver1.leftStick.X();
         double turn = driver1.rightStick.X();
-        double speed = 0.8;
+        double speed = 0.7;
 
         Vector2d driveVector = new Vector2d(strafe, drive);
         Vector2d rotatedVector = driveVector.rotateBy(Math.toDegrees(270-gyro.getHeading()));
@@ -64,14 +64,14 @@ public class CompTeleOp extends BaseOpMode {
         //turns PID off when turning
         if (turn != 0){ pid_on = false;}
         //when the speed of rotation is less then 120 than turn PID on.
-        else if (Math.abs(currentRateOfChange) <= 120) pid_on = true;
+        else if (currentRateOfChange <= 120) pid_on = true;
         //if PID is on and not on last cycle then
         if (pid_on && !pid_on_last_cycle) {
             setPoint = gyro.getHeading();
         }
         //if PID is on and on last cycle then it corrects it.
         else if (pid_on){
-            turn = pid.getCorrection(gyro.getHeading(), setPoint);
+            turn = pid.get(gyro.getHeading(), setPoint);
         }
         //sets gain
         pid.setConstants(proportional,integral,derivative);
@@ -88,6 +88,8 @@ public class CompTeleOp extends BaseOpMode {
         fr.setPower((drive + strafe - turn) * speed);
         bl.setPower(-(drive + strafe + turn) * speed);
         br.setPower((drive - strafe - turn) * speed);
+
+        BaseOpMode.addData("heading", gyro.getHeading());
     }
 
 }
