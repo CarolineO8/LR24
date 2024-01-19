@@ -64,7 +64,7 @@ public class CompTeleOp extends BaseOpMode {
         //turns PID off when turning
         if (turn != 0){ pid_on = false;}
         //when the speed of rotation is less then 120 than turn PID on.
-        else if (Math.abs(currentRateOfChange) <= 120) pid_on = true;
+        else if (currentRateOfChange <= 120) pid_on = true;
         //if PID is on and not on last cycle then
         if (pid_on && !pid_on_last_cycle) {
             setPoint = gyro.getHeading();
