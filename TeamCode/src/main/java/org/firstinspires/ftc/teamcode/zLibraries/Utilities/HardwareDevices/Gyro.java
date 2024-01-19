@@ -1,6 +1,11 @@
 package org.firstinspires.ftc.teamcode.zLibraries.Utilities.HardwareDevices;
 
+import static com.arcrobotics.ftclib.kotlin.extensions.geometry.Vector2dExtKt.getAngle;
+
+import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -12,7 +17,7 @@ import java.util.ArrayList;
 
 public class Gyro {
 
-    private BNO055IMU controlHubIMU;
+    private final BNO055IMU controlHubIMU;
 
     public static ArrayList<Gyro> gyros = new ArrayList<>();
     private double wrappedHeading = 0;
@@ -21,27 +26,55 @@ public class Gyro {
     double previousTime = 0;
     double previousChange = 0;
 
+
     public Gyro(String name){
         gyros.add(this);
-        controlHubIMU = imuConstructor(name);
+        controlHubIMU = BaseOpMode.hardware.get(BNO055IMU.class, name);
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        controlHubIMU.initialize(parameters);
+
+
+
+        setCurrentHeading(0);
+
+
     }
+
 
     public double getHeading(){
         return wrappedHeading;
     }
+
 
     //maybe make total heading
     public double getRawHeading(){
         return rawHeading;
     }
 
+    public double getUnwrappedHeading(){
+        return rawHeading - offset;
+    }
+
     public void resetHeading(){
         offset += rawHeading;
     }
 
+
+
+    //In radians
     public void setCurrentHeading(double heading){
-        resetHeading();
-        offset -= heading;
+        offset = -heading;
+    }
+
+    public static void updateAngles(){
+        for(Gyro g : gyros){
+            g.update();
+        }
+    }
+
+    public double getVeryRawHeading(){
+        return 0;
     }
 
     public double getRateOfChange(){
@@ -54,30 +87,28 @@ public class Gyro {
         return Math.abs(rateOfChange);
     }
 
-    public static void updateAngles(){
-        for(Gyro g : gyros){
-            g.update();
-        }
-    }
-
     public static void resetGyroList(){
         gyros.clear();
     }
 
     private void update(){
-        Orientation angles = controlHubIMU.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
 
         //TODO revHub orientation might matter
-        double rawYaw = angles.firstAngle - offset;
-//        double rawPitch = angles.secondAngle;
-//        double rawRoll = angles.thirdAngle;
+        double rawYaw;
+        Orientation angles = controlHubIMU.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+
+        rawYaw = angles.firstAngle;
 
         rawHeading = rawYaw;
-        wrappedHeading = wrapAngle(rawYaw);
+
+        wrappedHeading = wrapAngle(rawYaw) - offset;
+//        BaseOpMode.addData("offset", offset);
 
     }
 
     private double wrapAngle(double angle){
+//        angle += 2 * Math.PI;
+
         while (angle > Math.PI){
             angle -= 2 * Math.PI;
         }
@@ -86,19 +117,9 @@ public class Gyro {
             angle += 2 * Math.PI;
         }
 
+
+
         return angle;
     }
 
-    private BNO055IMU imuConstructor(String deviceName){
-        BNO055IMU imu;
-        imu = BaseOpMode.hardware.get(BNO055IMU.class, deviceName);
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opMode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-        imu.initialize(parameters);
-        return imu;
-    }
 }

@@ -58,11 +58,11 @@ public class PID {
     public double getCorrection(double current, double target){
         double error = target - current;
 
-        BaseOpMode.addData("Error", error);
+//        BaseOpMode.addData("Error", error);
 
-        if(target < homedThreshold && current < homedThreshold){
-            return homedConstant;
-        }
+//        if(target < homedThreshold && current < homedThreshold){
+//            return homedConstant;
+//        }
 
         double currentTime = runtime.milliseconds();
         double prevTime = timeRingBuffer.getValue(currentTime);
@@ -73,7 +73,7 @@ public class PID {
             deltaTime = 0;
         }
 
-        BaseOpMode.addData("DeltaTime", deltaTime);
+//        BaseOpMode.addData("DeltaTime", deltaTime);
 
 
         double previousError = prevErrorRingBuffer.getValue(error);
@@ -98,11 +98,75 @@ public class PID {
         //FeedForward Component
         double lowerLimitComponent = Math.signum(error) * lowerLimitConstant;
 
-        BaseOpMode.addData("Responce", pComponent + iComponent + dComponent + lowerLimitComponent + feedForwardConstant);
+//        BaseOpMode.addData("Responce", pComponent + iComponent + dComponent + lowerLimitComponent + feedForwardConstant);
 
         if(Math.abs(error) < deadZone){
             integralSum = 0;
-            BaseOpMode.addData("FeedForward", error);
+//            BaseOpMode.addData("FeedForward", error);
+            return feedForwardConstant + pComponent + iComponent + dComponent;
+        }
+
+        return pComponent + iComponent + dComponent + lowerLimitComponent + feedForwardConstant;
+    }
+
+    public double getCorrectionHeading(double current, double target){
+        double error = target - current;
+
+        while (error > Math.PI){
+            error -= 2 * Math.PI;
+        }
+
+        while (error < -Math.PI){
+            error += 2 * Math.PI;
+        }
+
+        BaseOpMode.addData("error", error);
+
+//        BaseOpMode.addData("Error", error);
+
+//        if(target < homedThreshold && current < homedThreshold){
+//            return homedConstant;
+//        }
+
+        double currentTime = runtime.milliseconds();
+        double prevTime = timeRingBuffer.getValue(currentTime);
+        double deltaTime = currentTime - prevTime;
+
+        if(deltaTime > 200){
+            reset();
+            deltaTime = 0;
+        }
+
+//        BaseOpMode.addData("DeltaTime", deltaTime);
+
+
+        double previousError = prevErrorRingBuffer.getValue(error);
+
+
+
+        //Proportional component
+        double pComponent = error * kP;
+
+        //Integral component
+        if(Math.signum(previousError) != Math.signum(error)){
+            integralSum = 0;
+        }
+
+        integralSum += kI * error;
+
+        double iComponent = integralSum * deltaTime;
+
+        //Derivative Component
+        double dComponent = (error - previousError) / deltaTime * kD;
+
+        //FeedForward Component
+        double lowerLimitComponent = Math.signum(error) * lowerLimitConstant;
+
+//        BaseOpMode.addData("Responce", pComponent + iComponent + dComponent + lowerLimitComponent + feedForwardConstant);
+
+        if(Math.abs(error) < deadZone){
+            integralSum = 0;
+//            BaseOpMode.addData("FeedForward", error);
             return feedForwardConstant + pComponent + iComponent + dComponent;
         }
 
