@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class Dashboard {
-    public static double proportional = 0.1;
+    public static double proportional = -0.61;
     public static double integral = 0;
-    public static double derivative = 0;
+    public static double derivative = -0.00001;
 }

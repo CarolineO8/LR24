@@ -71,7 +71,7 @@ public class CompTeleOp extends BaseOpMode {
         }
         //if PID is on and on last cycle then it corrects it.
         else if (pid_on){
-            turn = pid.get(gyro.getHeading(), setPoint);
+            turn = pid.getCorrectionHeading(gyro.getHeading(), setPoint);
         }
         //sets gain
         pid.setConstants(proportional,integral,derivative);
