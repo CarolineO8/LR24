@@ -189,8 +189,8 @@ public class BluePipeline extends OpenCvPipeline {
         return centerRect;
     }
 
-    public static double getRectPos() {
-        double rectPos = 0;
+    public static int getRectPos() {
+        int rectPos = 0;
 
         if (largestRect != null) {
             if (getCenter() < IMG_WIDTH / 5) {
