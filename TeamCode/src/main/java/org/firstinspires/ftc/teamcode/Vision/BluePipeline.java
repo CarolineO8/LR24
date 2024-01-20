@@ -32,14 +32,14 @@ import java.util.List;
 public class BluePipeline extends OpenCvPipeline {
 
     public static int max_H = 100;
-    public static int max_S = 255;
+    public static int max_S = 245;
     public static int max_V = 255;
 
     public static Rect largestRect;
 
     public static int min_H = 90;
-    public static int min_S = 125;
-    public static int min_V = 200;
+    public static int min_S = 150;
+    public static int min_V = 160;
 
     public static double offset = 0;
     public static int erodeConstant = 1;
