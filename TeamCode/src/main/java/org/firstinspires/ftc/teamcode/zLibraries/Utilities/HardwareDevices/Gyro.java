@@ -2,9 +2,12 @@ package org.firstinspires.ftc.teamcode.zLibraries.Utilities.HardwareDevices;
 
 import static com.arcrobotics.ftclib.kotlin.extensions.geometry.Vector2dExtKt.getAngle;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
 import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -29,9 +32,24 @@ public class Gyro {
 
     public Gyro(String name){
         gyros.add(this);
-        controlHubIMU = BaseOpMode.hardware.get(BNO055IMU.class, name);
+        controlHubIMU = BaseOpMode.getHardwareMap().get(BNO055IMU.class, name);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.calibrationDataFile = "AdafruitIMUCalibration.json";
+        controlHubIMU.initialize(parameters);
+
+
+
+        setCurrentHeading(0);
+
+
+    }
+    public Gyro(HardwareMap map){
+        gyros.add(this);
+        controlHubIMU = map.get(BNO055IMU.class, "imuA");
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.calibrationDataFile = "AdafruitIMUCalibration.json";
         controlHubIMU.initialize(parameters);
 
 

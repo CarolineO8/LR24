@@ -36,7 +36,7 @@ public class CompTeleOp extends BaseOpMode {
         fr = BaseOpMode.hardware.get(DcMotor.class,"fr");
         br = BaseOpMode.hardware.get(DcMotor.class,"br");
         bl = BaseOpMode.hardware.get(DcMotor.class,"bl");
-        gyro = new Gyro("imu");
+        gyro = new Gyro("imuA");
         pid = new PID(proportional,integral,derivative);
 
 

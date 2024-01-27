@@ -15,8 +15,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 @Autonomous(name = "Test Auto")
 public class TestAuto extends OpMode {
     private OpenCvCamera camera;
-   // RedPipeline pipeline = new RedPipeline();
-    BluePipeline pipeline = new BluePipeline();
+    RedPipeline pipeline = new RedPipeline();
+    //BluePipeline pipeline = new BluePipeline();
 
 
     @Override

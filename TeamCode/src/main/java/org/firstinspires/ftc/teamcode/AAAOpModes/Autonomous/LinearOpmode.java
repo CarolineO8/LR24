@@ -45,6 +45,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.AAAOpModes.BaseOpMode;
 import org.firstinspires.ftc.teamcode.Vision.BluePipeline;
+import org.firstinspires.ftc.teamcode.Vision.RedPipeline;
 import org.firstinspires.ftc.teamcode.zLibraries.Utilities.Control.PID;
 import org.firstinspires.ftc.teamcode.zLibraries.Utilities.HardwareDevices.Gyro;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -52,7 +53,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(name="Basic: Linear OpMode", group="Linear OpMode")
-@Disabled
+//@Disabled
 public class LinearOpmode extends LinearOpMode {
     DcMotor fl;
     DcMotor fr;
@@ -65,27 +66,27 @@ public class LinearOpmode extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private OpenCvCamera camera;
-    // RedPipeline pipeline = new RedPipeline();
-    BluePipeline pipeline = new BluePipeline();
+     RedPipeline pipeline = new RedPipeline();
+   // BluePipeline pipeline = new BluePipeline();
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         //CODE THAT RUNS AFTER INIT
-        fl = BaseOpMode.hardware.get(DcMotor.class,"fl");
+        fl = hardwareMap.get(DcMotor.class,"fl");
         fl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        fr = BaseOpMode.hardware.get(DcMotor.class,"fr");
+        fr = hardwareMap.get(DcMotor.class,"fr");
         fr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        br = BaseOpMode.hardware.get(DcMotor.class,"br");
+        br = hardwareMap.get(DcMotor.class,"br");
         br.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bl = BaseOpMode.hardware.get(DcMotor.class,"bl");
+        bl = hardwareMap.get(DcMotor.class,"bl");
         bl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        gyro = new Gyro("imu");
+        gyro = new Gyro(hardwareMap);
         pid = new PID(proportional,integral,derivative);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -114,32 +115,46 @@ public class LinearOpmode extends LinearOpMode {
         waitForStart();
         runtime.reset();
         while (opModeIsActive()) {
+            boolean restart = true;
             //CODE THAT RUNS AFTER START
-            int teamPropPosition = pipeline.getRectPos();
-            if (teamPropPosition == 1) {
-                //left position
-                drive(400, -1, 0, 0, 0.4);
-                drive(200, 0, -1, 0, 0.4);
-                drive(200, 0, 1, 0, 0.4);
+            while(restart && opModeIsActive()) {
+                int teamPropPosition = pipeline.getRectPos();
+                if (teamPropPosition == 1) {
+                    //left position
 
-            }
-            else if (teamPropPosition == 2) {
-                //middle position
-                drive(400, -1, 0, 0, 0.4);
-                drive(200, -1, 0, 0, 0.4);
-                drive(200, 1, 0, 0, 0.4);
+                    telemetry.addData("position","left");
+                    telemetry.update();
+                    drive(400, -1, 0, 0, 0.4);
+                    drive(200, 0, -1, 0, 0.4);
+                    drive(200, 0, 1, 0, 0.4);
+                    restart = false;
 
-            }
-            else {
-                //right position
-               drive(400, -1, 0, 0, 0.4);
-               drive(200, 0, 1, 0, 0.4);
-                drive(200, 0, -1, 0, 0.4);
-            }
 
-            telemetry.update();
+                } else if (teamPropPosition == 2) {
+                    //middle position
+                    telemetry.addData("position","middle");
+                    telemetry.update();
+                    drive(400, 1, 0, 0, 0.8);
+                    drive(200, 1, 0, 0, 0.4);
+                    drive(200, 1, 0, 0, 0.4);
+                    restart = false;
+
+                } else if (teamPropPosition == 3) {
+                    //right position
+                    telemetry.addData("position","right");
+                    telemetry.update();
+                    drive(400, -1, 0, 0, 0.4);
+                    drive(200, 0, 1, 0, 0.4);
+                    drive(200, 0, -1, 0, 0.4);
+                    restart = false;
+                }
+
+                telemetry.addData("restart",restart);
+                telemetry.update();
+            }
         }
     }
+
 
     public void drive(double distance, double drive, double strafe, double turn, double speed){
         double distanceDriven = 0;
@@ -147,15 +162,39 @@ public class LinearOpmode extends LinearOpMode {
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        double variable = 0;
 
         while (Math.abs(distanceDriven) <= distance) {
-            distanceDriven = (double) (fl.getCurrentPosition() + fr.getCurrentPosition() + bl.getCurrentPosition() + br.getCurrentPosition()) /4;
+            distanceDriven = (double) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(br.getCurrentPosition()) + Math.abs(bl.getCurrentPosition())) /4;
+            telemetry.addData("encoder value", fl.getCurrentPosition());
+            variable = variable + 0.1;
+            telemetry.addData("encoder value", fr.getCurrentPosition());
+            telemetry.addData("encoder value", br.getCurrentPosition());
+            telemetry.addData("encoder value", bl.getCurrentPosition());
+            telemetry.addData("drive", drive);
+            telemetry.addData("strafe", strafe);
+            telemetry.addData("turn", turn);
+            telemetry.addData("speed", speed);
+            telemetry.addData("variable", variable);
+            telemetry.update();
 
-            fl.setPower(-(drive - strafe + turn) * speed);
+
+            fl.setPower(-0.5);
             fr.setPower((drive + strafe - turn) * speed);
             bl.setPower(-(drive + strafe + turn) * speed);
             br.setPower((drive - strafe - turn) * speed);
+
+            /*fl.setPower(-(drive - strafe + turn) * speed);
+            fr.setPower((drive + strafe - turn) * speed);
+            bl.setPower(-(drive + strafe + turn) * speed);
+            br.setPower((drive - strafe - turn) * speed);
+
+             */
         }
+
+
     }
+
+
 
 }
