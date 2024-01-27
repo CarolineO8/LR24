@@ -66,8 +66,8 @@ public class LinearOpmode extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private OpenCvCamera camera;
-     RedPipeline pipeline = new RedPipeline();
-   // BluePipeline pipeline = new BluePipeline();
+     //RedPipeline pipeline = new RedPipeline();
+    BluePipeline pipeline = new BluePipeline();
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -75,16 +75,16 @@ public class LinearOpmode extends LinearOpMode {
 
         //CODE THAT RUNS AFTER INIT
         fl = hardwareMap.get(DcMotor.class,"fl");
-        fl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr = hardwareMap.get(DcMotor.class,"fr");
-        fr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         br = hardwareMap.get(DcMotor.class,"br");
-        br.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bl = hardwareMap.get(DcMotor.class,"bl");
-        bl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         gyro = new Gyro(hardwareMap);
         pid = new PID(proportional,integral,derivative);
@@ -180,16 +180,18 @@ public class LinearOpmode extends LinearOpMode {
 
 
             fl.setPower(-0.5);
+            /*fr.setPower((drive + strafe - turn) * speed);
+            bl.setPower(-(drive + strafe + turn) * speed);
+            br.setPower((drive - strafe - turn) * speed);
+
+            fl.setPower(-(drive - strafe + turn) * speed);
             fr.setPower((drive + strafe - turn) * speed);
             bl.setPower(-(drive + strafe + turn) * speed);
             br.setPower((drive - strafe - turn) * speed);
 
-            /*fl.setPower(-(drive - strafe + turn) * speed);
-            fr.setPower((drive + strafe - turn) * speed);
-            bl.setPower(-(drive + strafe + turn) * speed);
-            br.setPower((drive - strafe - turn) * speed);
+            */
 
-             */
+
         }
 
 
