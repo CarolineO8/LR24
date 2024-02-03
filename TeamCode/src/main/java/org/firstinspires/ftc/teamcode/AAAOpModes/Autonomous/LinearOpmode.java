@@ -148,44 +148,43 @@ public class LinearOpmode extends LinearOpMode {
             boolean restart = true;
             //CODE THAT RUNS AFTER START
             while(restart && opModeIsActive()) {
-                drive(100, 0, 1, 0, 0.4);
                 int teamPropPosition = pipeline.getRectPos();
-                if (teamPropPosition == 1) {
-                    //left position
+                drive(100, 0, 1, 0, 0.4);
+
+                while (restart) {
+                    if (teamPropPosition == 1) {
+                        //left position
+
+                        telemetry.addData("position", "left");
+                        telemetry.update();
+                        drive(1150, -1, 0, 0, 0.4);
+                        drive(750, 0, 0, 1, 0.2);
+                        // Deposit Purple Picture
+                        drive(725, 0, 0, -1, 0.2);
+                        restart = false;
 
 
-                    telemetry.addData("position","left");
-                    telemetry.update();
-                    drive(1150, -1, 0, 0, 0.4);
-                    drive(750, 0, 0, 1, 0.2);
-                    // Deposit Purple Picture
-                    drive(725, 0, 0, -1, 0.2);
-                    restart = false;
+                    } else if (teamPropPosition == 2) {
+                        //middle position
+                        telemetry.addData("position", "middle");
+                        telemetry.update();
+                        drive(1150, -1, 0, 0, 0.4);
+                        restart = false;
 
 
-
-
-                } else if (teamPropPosition == 2) {
-                    //middle position
-                    telemetry.addData("position","middle");
-                    telemetry.update();
-                    drive(1150, -1, 0, 0, 0.4);
-
-
-                    restart = false;
-
-
-                } else if (teamPropPosition == 3) {
-                    //right position
-                    telemetry.addData("position","right");
-                    telemetry.update();
-                    drive(1150, -1, 0, 0, 0.4);
-                    drive(750, 0, 0, -1, 0.2);
-                    // Deposit Purple Picture
-                    drive(725, 0, 0, 1, 0.2);
-                    restart = false;
+                    } else if (teamPropPosition == 3) {
+                        //right position
+                        telemetry.addData("position", "right");
+                        telemetry.update();
+                        drive(1150, -1, 0, 0, 0.4);
+                        drive(750, 0, 0, -1, 0.2);
+                        // Deposit Purple Picture
+                        drive(725, 0, 0, 1, 0.2);
+                        restart = false;
+                    }
                 }
-                drive(1200, -1, 0, 0, 0.4);
+
+                drive(800, -1, 0, 0, 0.4);
                 if (teamPropPosition == 2) {
                     //Deposit Purple Pixel
                 }
@@ -201,12 +200,13 @@ public class LinearOpmode extends LinearOpMode {
 
                     telemetry.addData("position","left");
                     telemetry.update();
-                    drive(50, 0, 0, -1, 0.4);
-                    drive(1100, -1, 0, 0, 0.4);
-                    drive(750, 0, 0, 1, 0.2);
-                    // Deposit Purple Picture
-                    drive(750, 0, 0, -1, 0.2);
-                    
+                    drive(600, 0, -1, 0, 0.4);
+                    drive(400, -1, 0, 0, 0.4);
+                    // Deposit yellow Picture
+                    drive(200, 1, 0, 0, 0.4);
+                    drive(1600, 0, 1, 0, 0.4);
+                    drive(400, -1, 0, 0, 0.4);
+
 
 
 
@@ -215,9 +215,11 @@ public class LinearOpmode extends LinearOpMode {
                     //middle position
                     telemetry.addData("position","middle");
                     telemetry.update();
-                    drive(1400, -1, 0, 0, 0.4);
-                    // Deposit Purple Picture
-                    drive(400, 1, 0, 0, 0.4);
+                    drive(400, -1, 0, 0, 0.4);
+                    // Deposit yellow Picture
+                    drive(200, 1, 0, 0, 0.4);
+                    drive(1000, 0, 1, 0, 0.4);
+                    drive(600, -1, 0, 0, 0.4);
 
 
 
@@ -225,10 +227,12 @@ public class LinearOpmode extends LinearOpMode {
                     //right position
                     telemetry.addData("position","right");
                     telemetry.update();
-                    drive(1000, -1, 0, 0, 0.4);
-                    drive(750, 0, 0, -1, 0.2);
-                    // Deposit Purple Picture
-                    drive(750, 0, 0, 1, 0.2);
+                    drive(600, 0, 1, 0, 0.4);
+                    drive(400, -1, 0, 0, 0.4);
+                    // Deposit yellow Picture
+                    drive(200, 1, 0, 0, 0.4);
+                    drive(400, 0, 1, 0, 0.4);
+                    drive(600, -1, 0, 0, 0.4);
 
                 }
 
@@ -262,11 +266,11 @@ public class LinearOpmode extends LinearOpMode {
         while (Math.abs(distanceDriven) <= distance) {
             distanceDriven = (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(br.getCurrentPosition()) + Math.abs(bl.getCurrentPosition())) /4;
             variable = variable + 0.1;
-            telemetry.addData("distancedriven", distanceDriven);
-            telemetry.addData("drive", drive);
-            telemetry.addData("strafe", strafe);
-            telemetry.addData("turn", turn);
-            telemetry.addData("speed", speed);
+            //telemetry.addData("distancedriven", distanceDriven);
+            //telemetry.addData("drive", drive);
+            //telemetry.addData("strafe", strafe);
+            //telemetry.addData("turn", turn);
+            //telemetry.addData("speed", speed);
             telemetry.addData("variable", variable);
             telemetry.update();
 
