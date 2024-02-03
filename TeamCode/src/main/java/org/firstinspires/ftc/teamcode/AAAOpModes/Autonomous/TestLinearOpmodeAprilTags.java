@@ -60,7 +60,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name="Basic: Linear OpMode", group="Linear OpMode")
+@Autonomous(name="Test: Linear OpMode", group="Linear OpMode")
 //@Disabled
 public class TestLinearOpmodeAprilTags extends LinearOpMode {
     // Adjust these numbers to suit your robot.

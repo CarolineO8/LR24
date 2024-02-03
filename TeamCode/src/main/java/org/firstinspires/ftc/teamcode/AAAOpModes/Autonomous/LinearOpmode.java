@@ -27,11 +27,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 package org.firstinspires.ftc.teamcode.AAAOpModes.Autonomous;
 
+
+import static org.firstinspires.ftc.teamcode.AAAOpModes.BaseOpMode.setOpMode;
 import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.derivative;
 import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.integral;
 import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.proportional;
+
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -39,8 +43,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.AAAOpModes.BaseOpMode;
@@ -52,6 +58,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+
 @Autonomous(name="Basic: Linear OpMode", group="Linear OpMode")
 //@Disabled
 public class LinearOpmode extends LinearOpMode {
@@ -61,36 +68,49 @@ public class LinearOpmode extends LinearOpMode {
     DcMotor br;
     Gyro gyro;
 
+
     PID pid;
+
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private OpenCvCamera camera;
-     //RedPipeline pipeline = new RedPipeline();
+    //RedPipeline pipeline = new RedPipeline();
     BluePipeline pipeline = new BluePipeline();
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
+
         //CODE THAT RUNS AFTER INIT
         fl = hardwareMap.get(DcMotor.class,"fl");
-        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
         fr = hardwareMap.get(DcMotor.class,"fr");
-        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
         br = hardwareMap.get(DcMotor.class,"br");
-        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
         bl = hardwareMap.get(DcMotor.class,"bl");
-        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
         gyro = new Gyro(hardwareMap);
         pid = new PID(proportional,integral,derivative);
 
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             // Start streaming
@@ -98,10 +118,13 @@ public class LinearOpmode extends LinearOpMode {
             public void onOpened() {
                 camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 
+
 //this just sets up the camera
                 //  camera.resumeViewport();
 
+
             }
+
 
             @Override
             public void onError(int errorCode) {
@@ -112,48 +135,113 @@ public class LinearOpmode extends LinearOpMode {
         FtcDashboard.getInstance().startCameraStream(camera, 30);
 
 
+
+
         waitForStart();
+        resetRuntime();
         runtime.reset();
-        while (opModeIsActive()) {
+
+
+
+
+        if (opModeIsActive()) {
             boolean restart = true;
             //CODE THAT RUNS AFTER START
             while(restart && opModeIsActive()) {
+                drive(100, 0, 1, 0, 0.4);
                 int teamPropPosition = pipeline.getRectPos();
                 if (teamPropPosition == 1) {
                     //left position
 
+
                     telemetry.addData("position","left");
                     telemetry.update();
-                    drive(400, -1, 0, 0, 0.4);
-                    drive(200, 0, -1, 0, 0.4);
-                    drive(200, 0, 1, 0, 0.4);
+                    drive(1150, -1, 0, 0, 0.4);
+                    drive(750, 0, 0, 1, 0.2);
+                    // Deposit Purple Picture
+                    drive(725, 0, 0, -1, 0.2);
                     restart = false;
+
+
 
 
                 } else if (teamPropPosition == 2) {
                     //middle position
                     telemetry.addData("position","middle");
                     telemetry.update();
-                    drive(400, 1, 0, 0, 0.8);
-                    drive(200, 1, 0, 0, 0.4);
-                    drive(200, 1, 0, 0, 0.4);
+                    drive(1150, -1, 0, 0, 0.4);
+
+
                     restart = false;
+
 
                 } else if (teamPropPosition == 3) {
                     //right position
                     telemetry.addData("position","right");
                     telemetry.update();
-                    drive(400, -1, 0, 0, 0.4);
-                    drive(200, 0, 1, 0, 0.4);
-                    drive(200, 0, -1, 0, 0.4);
+                    drive(1150, -1, 0, 0, 0.4);
+                    drive(750, 0, 0, -1, 0.2);
+                    // Deposit Purple Picture
+                    drive(725, 0, 0, 1, 0.2);
                     restart = false;
                 }
+                drive(1200, -1, 0, 0, 0.4);
+                if (teamPropPosition == 2) {
+                    //Deposit Purple Pixel
+                }
+                drive(800, 0, 0, -1, 0.2);
+                drive(3500, -1, 0, 0, 0.4);
+                drive(50, 0, 0, -1, 0.4);
+                drive(1100, 0, -1, 0, 0.4);
+
+
+                if (teamPropPosition == 1) {
+                    //left position
+
+
+                    telemetry.addData("position","left");
+                    telemetry.update();
+                    drive(50, 0, 0, -1, 0.4);
+                    drive(1100, -1, 0, 0, 0.4);
+                    drive(750, 0, 0, 1, 0.2);
+                    // Deposit Purple Picture
+                    drive(750, 0, 0, -1, 0.2);
+                    restart = false;
+
+
+
+
+                } else if (teamPropPosition == 2) {
+                    //middle position
+                    telemetry.addData("position","middle");
+                    telemetry.update();
+                    drive(1400, -1, 0, 0, 0.4);
+                    // Deposit Purple Picture
+                    drive(400, 1, 0, 0, 0.4);
+                    restart = false;
+
+
+                } else if (teamPropPosition == 3) {
+                    //right position
+                    telemetry.addData("position","right");
+                    telemetry.update();
+                    drive(1000, -1, 0, 0, 0.4);
+                    drive(750, 0, 0, -1, 0.2);
+                    // Deposit Purple Picture
+                    drive(750, 0, 0, 1, 0.2);
+                    restart = false;
+                }
+
 
                 telemetry.addData("restart",restart);
                 telemetry.update();
             }
         }
+
+
     }
+
+
 
 
     public void drive(double distance, double drive, double strafe, double turn, double speed){
@@ -162,15 +250,19 @@ public class LinearOpmode extends LinearOpMode {
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fl.setDirection(DcMotorSimple.Direction.REVERSE);
+        bl.setDirection(DcMotorSimple.Direction.REVERSE);
         double variable = 0;
 
+
         while (Math.abs(distanceDriven) <= distance) {
-            distanceDriven = (double) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(br.getCurrentPosition()) + Math.abs(bl.getCurrentPosition())) /4;
-            telemetry.addData("encoder value", fl.getCurrentPosition());
+            distanceDriven = (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(br.getCurrentPosition()) + Math.abs(bl.getCurrentPosition())) /4;
             variable = variable + 0.1;
-            telemetry.addData("encoder value", fr.getCurrentPosition());
-            telemetry.addData("encoder value", br.getCurrentPosition());
-            telemetry.addData("encoder value", bl.getCurrentPosition());
+            telemetry.addData("distancedriven", distanceDriven);
             telemetry.addData("drive", drive);
             telemetry.addData("strafe", strafe);
             telemetry.addData("turn", turn);
@@ -179,24 +271,36 @@ public class LinearOpmode extends LinearOpMode {
             telemetry.update();
 
 
-            fl.setPower(-0.5);
-            /*fr.setPower((drive + strafe - turn) * speed);
-            bl.setPower(-(drive + strafe + turn) * speed);
-            br.setPower((drive - strafe - turn) * speed);
 
-            fl.setPower(-(drive - strafe + turn) * speed);
+
+//            fl.setPower(0.5);
+//            fr.setPower(0.5);
+//            bl.setPower(0.5);
+//            br.setPower(0.5);
+//
+            fl.setPower((drive - strafe + turn) * speed);
             fr.setPower((drive + strafe - turn) * speed);
-            bl.setPower(-(drive + strafe + turn) * speed);
+            bl.setPower((drive + strafe + turn) * speed);
             br.setPower((drive - strafe - turn) * speed);
 
-            */
+
+
+
+
+
 
 
         }
+
+
 
 
     }
 
 
 
+
+
+
 }
+
