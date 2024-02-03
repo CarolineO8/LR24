@@ -206,7 +206,7 @@ public class LinearOpmode extends LinearOpMode {
                     drive(750, 0, 0, 1, 0.2);
                     // Deposit Purple Picture
                     drive(750, 0, 0, -1, 0.2);
-                    restart = false;
+                    
 
 
 
@@ -218,7 +218,7 @@ public class LinearOpmode extends LinearOpMode {
                     drive(1400, -1, 0, 0, 0.4);
                     // Deposit Purple Picture
                     drive(400, 1, 0, 0, 0.4);
-                    restart = false;
+
 
 
                 } else if (teamPropPosition == 3) {
@@ -229,7 +229,7 @@ public class LinearOpmode extends LinearOpMode {
                     drive(750, 0, 0, -1, 0.2);
                     // Deposit Purple Picture
                     drive(750, 0, 0, 1, 0.2);
-                    restart = false;
+
                 }
 
 
