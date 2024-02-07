@@ -31,7 +31,6 @@
 package org.firstinspires.ftc.teamcode.AAAOpModes.Autonomous;
 
 
-import static org.firstinspires.ftc.teamcode.AAAOpModes.BaseOpMode.setOpMode;
 import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.derivative;
 import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.integral;
 import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.proportional;
@@ -39,17 +38,13 @@ import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.proport
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.AAAOpModes.BaseOpMode;
 import org.firstinspires.ftc.teamcode.Vision.BluePipeline;
 import org.firstinspires.ftc.teamcode.Vision.RedPipeline;
 import org.firstinspires.ftc.teamcode.zLibraries.Utilities.Control.PID;
@@ -59,9 +54,9 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 
-@Autonomous(name="Red Front Auto: Linear OpMode", group="Linear OpMode")
+@Autonomous(name="Red Back Auto: Linear OpMode", group="Linear OpMode")
 //@Disabled
-public class RedFrontAuto extends LinearOpMode {
+public class RedBackAuto extends LinearOpMode {
     DcMotor fl;
     DcMotor fr;
     DcMotor bl;
@@ -76,7 +71,7 @@ public class RedFrontAuto extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private OpenCvCamera camera;
     RedPipeline pipeline = new RedPipeline();
-    //BluePipeline pipeline = new BluePipeline();
+    // BluePipeline pipeline = new BluePipeline();
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -148,13 +143,33 @@ public class RedFrontAuto extends LinearOpMode {
             boolean restart = true;
             //CODE THAT RUNS AFTER START
             while(restart && opModeIsActive()) {
-                drive(200, 0, 1, 0, 0.4);
-                int teamPropPosition = pipeline.getRectPos();;
-
+                int teamPropPosition = pipeline.getRectPos();
+                drive(200, 0, -1, 0, 0.4);
+                //drive(50, 0, 0, -1, 0.4);
 
                 while (restart) {
                     if (teamPropPosition == 1) {
                         //left position
+
+                        telemetry.addData("position", "left");
+                        telemetry.update();
+                        drive(1150, -1, 0, 0, 0.4);
+                        drive(750, 0, 0, -1, 0.2);
+                        // Deposit Purple Picture
+                        drive(725, 0, 0, 1, 0.2);
+                        restart = false;
+
+
+                    } else if (teamPropPosition == 2) {
+                        //middle position
+                        telemetry.addData("position", "middle");
+                        telemetry.update();
+                        drive(1150, -1, 0, 0, 0.4);
+                        restart = false;
+
+
+                    } else if (teamPropPosition == 3) {
+                        //right position
                         telemetry.addData("position", "right");
                         telemetry.update();
                         drive(1150, -1, 0, 0, 0.4);
@@ -162,56 +177,45 @@ public class RedFrontAuto extends LinearOpMode {
                         // Deposit Purple Picture
                         drive(725, 0, 0, -1, 0.2);
                         restart = false;
-
-                    } else if (teamPropPosition == 2) {
-                        //middle position
-                        telemetry.addData("position", "middle");
-                        telemetry.update();
-                        drive(1000, -1, 0, 0, 0.4);
-                        drive(1500, 0, 0, 1, 0.2);
-                        //Deposit Purple Pixel
-                        drive(1500, 0, 0, -1, 0.2);
-                        restart = false;
-
-                    } else if (teamPropPosition == 3) {
-                        //right position
-                        telemetry.addData("position", "left");
-                        telemetry.update();
-                        drive(1150, -1, 0, 0, 0.4);
-                        restart = false;
                     }
                 }
 
-
-
-                drive(750, 0, 0, 1, 0.2);
-                drive(900, -1, 0, 0, 0.4);
-
-                if (teamPropPosition == 1) {
+                drive(800, -1, 0, 0, 0.4);
+                if (teamPropPosition == 2) {
                     //Deposit Purple Pixel
                 }
+                drive(200, -1, 0, 0, 0.4);
+                drive(800, 0, 0, 1, 0.2);
+                drive(3500, -1, 0, 0, 0.4);
+                drive(50, 0, 0, 1, 0.4);
+                drive(1100, 0, 1, 0, 0.4);
+
 
                 if (teamPropPosition == 1) {
                     //left position
+
+
                     telemetry.addData("position","left");
                     telemetry.update();
-                    drive(300, -1, 0, 0, 0.4);
                     drive(600, 0, 1, 0, 0.4);
                     drive(400, -1, 0, 0, 0.4);
                     // Deposit yellow Picture
                     drive(200, 1, 0, 0, 0.4);
-                    drive(600, 0, 1, 0, 0.4);
+                    drive(1600, 0, -1, 0, 0.4);
                     drive(400, -1, 0, 0, 0.4);
+
+
+
 
 
                 } else if (teamPropPosition == 2) {
                     //middle position
                     telemetry.addData("position","middle");
                     telemetry.update();
-                    drive(700, -1, 0, 0, 0.4);
+                    drive(400, -1, 0, 0, 0.4);
                     // Deposit yellow Picture
                     drive(200, 1, 0, 0, 0.4);
-                    drive(1200, 0, 1, 0, 0.4);
+                    drive(1000, 0, -1, 0, 0.4);
                     drive(600, -1, 0, 0, 0.4);
 
 
@@ -220,12 +224,11 @@ public class RedFrontAuto extends LinearOpMode {
                     //right position
                     telemetry.addData("position","right");
                     telemetry.update();
-                    drive(300, -1, 0, 0, 0.4);
                     drive(600, 0, -1, 0, 0.4);
                     drive(400, -1, 0, 0, 0.4);
                     // Deposit yellow Picture
                     drive(200, 1, 0, 0, 0.4);
-                    drive(1800, 0, 1, 0, 0.4);
+                    drive(400, 0, -1, 0, 0.4);
                     drive(600, -1, 0, 0, 0.4);
 
                 }
@@ -289,11 +292,6 @@ public class RedFrontAuto extends LinearOpMode {
 
 
         }
-
-        fl.setPower(0);
-        fr.setPower(0);
-        bl.setPower(0);
-        br.setPower(0);
 
 
 
