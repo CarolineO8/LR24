@@ -153,6 +153,7 @@ public class RedFrontAuto extends LinearOpMode {
 
 
                 while (restart) {
+                    teamPropPosition = pipeline.getRectPos();
                     if (teamPropPosition == 1) {
                         //left position
                         telemetry.addData("position", "right");

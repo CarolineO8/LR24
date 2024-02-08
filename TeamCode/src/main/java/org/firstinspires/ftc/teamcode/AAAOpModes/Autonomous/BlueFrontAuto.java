@@ -149,10 +149,11 @@ public class BlueFrontAuto extends LinearOpMode {
             //CODE THAT RUNS AFTER START
             while(restart && opModeIsActive()) {
                 drive(200, 0, -1, 0, 0.4);
-                int teamPropPosition = pipeline.getRectPos();;
+                int teamPropPosition = pipeline.getRectPos();
                 drive(50, 0, 0, -1, 0.2);
 
                 while (restart) {
+                    teamPropPosition = pipeline.getRectPos();
                     if (teamPropPosition == 1) {
                         //left position
 

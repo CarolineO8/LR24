@@ -148,6 +148,7 @@ public class RedBackAuto extends LinearOpMode {
                 //drive(50, 0, 0, -1, 0.4);
 
                 while (restart) {
+                    teamPropPosition = pipeline.getRectPos();
                     if (teamPropPosition == 1) {
                         //left position
 
@@ -185,10 +186,10 @@ public class RedBackAuto extends LinearOpMode {
                     //Deposit Purple Pixel
                 }
                 drive(200, -1, 0, 0, 0.4);
-                drive(800, 0, 0, 1, 0.2);
-                drive(3500, -1, 0, 0, 0.4);
-                drive(50, 0, 0, 1, 0.4);
-                drive(1100, 0, 1, 0, 0.4);
+                drive(700, 0, 0, 1, 0.2);
+                drive(3300, -1, 0, 0, 0.4);
+                drive(600, 0, 1, 0, 0.4);
+                drive(100, 0, 0, -1, 0.4);
 
 
                 if (teamPropPosition == 1) {
@@ -201,7 +202,7 @@ public class RedBackAuto extends LinearOpMode {
                     drive(400, -1, 0, 0, 0.4);
                     // Deposit yellow Picture
                     drive(200, 1, 0, 0, 0.4);
-                    drive(1600, 0, -1, 0, 0.4);
+                    drive(1800, 0, -1, 0, 0.4);
                     drive(400, -1, 0, 0, 0.4);
 
 
@@ -215,7 +216,7 @@ public class RedBackAuto extends LinearOpMode {
                     drive(400, -1, 0, 0, 0.4);
                     // Deposit yellow Picture
                     drive(200, 1, 0, 0, 0.4);
-                    drive(1000, 0, -1, 0, 0.4);
+                    drive(1200, 0, -1, 0, 0.4);
                     drive(600, -1, 0, 0, 0.4);
 
 
@@ -228,7 +229,7 @@ public class RedBackAuto extends LinearOpMode {
                     drive(400, -1, 0, 0, 0.4);
                     // Deposit yellow Picture
                     drive(200, 1, 0, 0, 0.4);
-                    drive(400, 0, -1, 0, 0.4);
+                    drive(600, 0, -1, 0, 0.4);
                     drive(600, -1, 0, 0, 0.4);
 
                 }
@@ -292,6 +293,10 @@ public class RedBackAuto extends LinearOpMode {
 
 
         }
+        fl.setPower(0);
+        fr.setPower(0);
+        bl.setPower(0);
+        br.setPower(0);
 
 
 

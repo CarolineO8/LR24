@@ -146,6 +146,7 @@ public class BlueBackAuto extends LinearOpMode {
                 drive(100, 0, 1, 0, 0.4);
 
                 while (restart) {
+                    teamPropPosition = pipeline.getRectPos();
                     if (teamPropPosition == 1) {
                         //left position
 
@@ -289,6 +290,10 @@ public class BlueBackAuto extends LinearOpMode {
 
 
         }
+        fl.setPower(0);
+        fr.setPower(0);
+        bl.setPower(0);
+        br.setPower(0);
 
 
 
