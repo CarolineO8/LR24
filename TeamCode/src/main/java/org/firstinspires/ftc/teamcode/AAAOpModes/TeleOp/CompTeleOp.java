@@ -45,8 +45,8 @@ public class CompTeleOp extends BaseOpMode {
     @Override
     public void externalLoop() {
         //After start
-        double drive = driver1.leftStick.Y();
-        double strafe = driver1.leftStick.X();
+        double drive = -driver1.leftStick.Y();
+        double strafe = -driver1.leftStick.X();
         double turn = driver1.rightStick.X();
         double speed = 0.7;
 
@@ -86,8 +86,36 @@ public class CompTeleOp extends BaseOpMode {
 
         fl.setPower(-(drive - strafe + turn) * speed);
         fr.setPower((drive + strafe - turn) * speed);
+        bl.setPower(-(drive + strafe + turn) * speed);
+        br.setPower((drive - strafe - turn) * speed);
         bl.setPower((-(drive + strafe + turn) * speed) * 11/12);
         br.setPower(((drive - strafe - turn) * speed) * 11/12);
+//        if (driver2.rightTrigger.isPressed()) {
+//            //
+//            intakeMotor.setpower(0.8);
+//        }
+//        if (driver2.leftTrigger.isPressed()) {
+//            //intake out
+//            intakeMotor.setpower(-0.8);
+//        }
+//        if (driver2.rightBumper.isTapped()) {
+//
+//        }
+//        if (driver2.leftBumper.isTapped()) {
+//
+//        }
+//        if (driver2.dpad_down.isTapped()) {
+//
+//        }
+//            slideMotorL.setpower(driver2.leftStick.Y());
+//            slideMotorR.setpower(driver2.leftStick.X());
+//        if (driver2.triangle.isTapped()) {
+//
+//        }
+//        if (driver2.circle.isTapped()) {
+//
+//        }
+
 
         BaseOpMode.addData("heading", gyro.getHeading());
     }
