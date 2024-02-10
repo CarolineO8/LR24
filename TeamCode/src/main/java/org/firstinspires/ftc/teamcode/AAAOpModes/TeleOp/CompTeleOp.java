@@ -77,10 +77,10 @@ public class CompTeleOp extends BaseOpMode {
         pid.setConstants(proportional,integral,derivative);
         pid_on_last_cycle = pid_on;
 
-        if (driver1.leftBumper.isPressed()) {
+        if (driver1.rightBumper.isPressed()) {
             speed = 0.2;
         }
-        else if (driver1.leftTrigger.isPressed()) {
+        else if (driver1.rightTrigger.isPressed()) {
             speed = 0.4;
         }
 
@@ -88,8 +88,8 @@ public class CompTeleOp extends BaseOpMode {
         fr.setPower((drive + strafe - turn) * speed);
         bl.setPower(-(drive + strafe + turn) * speed);
         br.setPower((drive - strafe - turn) * speed);
-        bl.setPower((-(drive + strafe + turn) * speed) * 11/12);
-        br.setPower(((drive - strafe - turn) * speed) * 11/12);
+//        bl.setPower((-(drive + strafe + turn) * speed) * 11/12);
+//        br.setPower(((drive - strafe - turn) * speed) * 11/12);
 //        if (driver2.rightTrigger.isPressed()) {
 //            //
 //            intakeMotor.setpower(0.8);
