@@ -26,6 +26,8 @@ public class TestServoMovement extends BaseOpMode {
     DcMotor slideMotorR;
     DcMotor intakeMotor;
 
+    int slidePosition = 0;
+
 
 
     @Override
@@ -34,7 +36,17 @@ public class TestServoMovement extends BaseOpMode {
         depositer = new Servo("depositer");
         depositerDoor = new Servo("depositerDoor");
         slideMotorL = BaseOpMode.hardware.get(DcMotor.class,"slideL");
+        slideMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideMotorL.setTargetPosition(0);
+        slideMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideMotorL.setPower(0.5);
         slideMotorR = BaseOpMode.hardware.get(DcMotor.class,"slideR");
+        slideMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideMotorR.setTargetPosition(0);
+        slideMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideMotorR.setPower(0.5);
         intakeMotor = BaseOpMode.hardware.get(DcMotor.class,"intakeMotor");
 
 
@@ -42,6 +54,9 @@ public class TestServoMovement extends BaseOpMode {
 
     @Override
     public void externalLoop() {
+        slideMotorR.setTargetPosition(slidePosition);
+        slideMotorL.setTargetPosition(slidePosition);
+
         //After start
         double slides = -driver2.leftStick.Y();
         if (driver2.leftBumper.isTapped()) {
@@ -65,8 +80,11 @@ public class TestServoMovement extends BaseOpMode {
         while (driver2.circle.isPressed()) {
             intakeMotor.setPower(-1);
         }
-        slideMotorL.setPower((slides) * 0.7);
-        slideMotorR.setPower((slides) * 0.7);
+
+        if(driver2.cross.isTapped()){
+            slidePosition += 50;
+        }
+
         intakeMotor.setPower(0);
         telemetry.update();
     }
