@@ -95,8 +95,8 @@ public class CompTeleOp extends BaseOpMode {
 
         fl.setPower(-(drive - strafe + turn) * speed);
         fr.setPower((drive + strafe - turn) * speed);
-        bl.setPower(-(drive + strafe + turn) * speed);
-        br.setPower((drive - strafe - turn) * speed);
+//        bl.setPower(-(drive + strafe + turn) * speed);
+//        br.setPower((drive - strafe - turn) * speed);
         bl.setPower((-(drive + strafe + turn) * speed) * 11/12);
         br.setPower(((drive - strafe - turn) * speed) * 11/12);
         if (driver2.rightTrigger.isPressed()) {
