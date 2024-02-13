@@ -1,17 +1,10 @@
 package org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp;
 
-import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.derivative;
-import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.integral;
-import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.proportional;
-
-import com.arcrobotics.ftclib.geometry.Vector2d;
-import com.arcrobotics.ftclib.hardware.motors.CRServo;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.AAAOpModes.BaseOpMode;
-import org.firstinspires.ftc.teamcode.zLibraries.Utilities.Control.PID;
-import org.firstinspires.ftc.teamcode.zLibraries.Utilities.HardwareDevices.Gyro;
 import org.firstinspires.ftc.teamcode.zLibraries.Utilities.HardwareDevices.Servo;
 
 //@Disabled
@@ -25,6 +18,7 @@ public class TestServoMovement extends BaseOpMode {
     DcMotor slideMotorL;
     DcMotor slideMotorR;
     DcMotor intakeMotor;
+    CRServo counterRoller;
 
     int slidePosition = 0;
 
@@ -35,6 +29,7 @@ public class TestServoMovement extends BaseOpMode {
         //On init
         depositer = new Servo("depositer");
         depositerDoor = new Servo("depositerDoor");
+        counterRoller = BaseOpMode.hardware.crservo.get("roll");
         slideMotorL = BaseOpMode.hardware.get(DcMotor.class,"slideL");
         slideMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -47,45 +42,77 @@ public class TestServoMovement extends BaseOpMode {
         slideMotorR.setTargetPosition(0);
         slideMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideMotorR.setPower(0.5);
-        intakeMotor = BaseOpMode.hardware.get(DcMotor.class,"intakeMotor");
-
-
+        intakeMotor = BaseOpMode.hardware.get(DcMotor.class,"intake");
     }
-
+    boolean up = true;
+    boolean down = false;
     @Override
     public void externalLoop() {
-        slideMotorR.setTargetPosition(slidePosition);
-        slideMotorL.setTargetPosition(slidePosition);
-
+//        slideMotorR.setTargetPosition(slidePosition);
+//        slideMotorL.setTargetPosition(slidePosition);
         //After start
-        double slides = -driver2.leftStick.Y();
         if (driver2.leftBumper.isTapped()) {
+            //deposit
             depositerDoor.setPosition(0.05);
         }
-        if (driver2.leftTrigger.isTapped()) {
-            depositerDoor.setPosition(0);
-        }
-        if (driver2.dpad_down.isTapped()) {
-            depositerDoor.setPosition(0.1);
-        }
+        //LOOK HERE!!!!!!!!!!!!!!!
         if (driver2.rightBumper.isTapped()) {
-            depositer.setPosition(0.55);
+            //transfer
+            slidePosition -= 200;
+            slideMotorR.setTargetPosition(slidePosition);
+            slideMotorL.setTargetPosition(slidePosition);
+            depositerDoor.setPosition(0);
+            slidePosition += 200;
+            slideMotorR.setTargetPosition(slidePosition);
+            slideMotorL.setTargetPosition(slidePosition);
         }
-        if (driver2.rightTrigger.isTapped()) {
-            depositer.setPosition(0.95);
-        }
-        while (driver2.cross.isPressed()) {
-            intakeMotor.setPower(1);
-        }
-        while (driver2.circle.isPressed()) {
+        if (driver2.rightTrigger.isToggled()){
+            //intake in
             intakeMotor.setPower(-1);
+            counterRoller.setPower(-1);
         }
-
-        if(driver2.cross.isTapped()){
-            slidePosition += 50;
+        else if (driver2.leftTrigger.isToggled()) {
+            //intake out
+            intakeMotor.setPower(1);
+            counterRoller.setPower(1);
         }
+        else {
+            //stop intake
+            intakeMotor.setPower(0);
+            counterRoller.setPower(0);
+        }
+        if (driver2.triangle.isTapped() && up) {
+            //initiate up
+            depositer.setPosition(0.95);
+            slidePosition -= 1000;
+            slideMotorR.setTargetPosition(slidePosition);
+            slideMotorL.setTargetPosition(slidePosition);
+            sleep(100);
+//            depositer.setPosition(0.55);
+            up = false;
+            down = true;
+        }
+        if (driver2.cross.isTapped() && down) {
+            //initiate down
+            up = true;
+            down = false;
+            depositerDoor.setPosition(0.15);
+            depositer.setPosition(0.95);
+            slidePosition += 1000;
+            slideMotorR.setTargetPosition(slidePosition);
+            slideMotorL.setTargetPosition(slidePosition);
+        }
+//        if (driver2.dpad_up.isTapped() && slidePosition <= -3000){
+//            slidePosition -= 100;
+//            slideMotorR.setTargetPosition(slidePosition);
+//            slideMotorL.setTargetPosition(slidePosition);
+//        }
+//        if(driver2.dpad_down.isTapped() && slidePosition >= -1000){
+//            slidePosition += 100;
+//            slideMotorR.setTargetPosition(slidePosition);
+//            slideMotorL.setTargetPosition(slidePosition);
+//        }
 
-        intakeMotor.setPower(0);
         telemetry.update();
     }
 
