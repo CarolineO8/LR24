@@ -38,6 +38,7 @@ import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.proport
 
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.arcrobotics.ftclib.hardware.motors.CRServo;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -54,6 +55,7 @@ import org.firstinspires.ftc.teamcode.Vision.BluePipeline;
 import org.firstinspires.ftc.teamcode.Vision.RedPipeline;
 import org.firstinspires.ftc.teamcode.zLibraries.Utilities.Control.PID;
 import org.firstinspires.ftc.teamcode.zLibraries.Utilities.HardwareDevices.Gyro;
+import org.firstinspires.ftc.teamcode.zLibraries.Utilities.HardwareDevices.Servo;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -66,6 +68,12 @@ public class RedFrontAuto extends LinearOpMode {
     DcMotor fr;
     DcMotor bl;
     DcMotor br;
+    DcMotor intakeMotor;
+    DcMotor slideMotorL;
+    DcMotor slideMotorR;
+    CRServo counterRoller;
+    Servo depositerDoor;
+    Servo depositer;
     Gyro gyro;
 
 

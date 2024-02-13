@@ -5,12 +5,14 @@ import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.integra
 import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.proportional;
 
 import com.arcrobotics.ftclib.geometry.Vector2d;
+import com.arcrobotics.ftclib.hardware.motors.CRServo;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.AAAOpModes.BaseOpMode;
 import org.firstinspires.ftc.teamcode.zLibraries.Utilities.Control.PID;
 import org.firstinspires.ftc.teamcode.zLibraries.Utilities.HardwareDevices.Gyro;
+import org.firstinspires.ftc.teamcode.zLibraries.Utilities.HardwareDevices.Servo;
 
 //@Disabled
 @TeleOp(name="AAA COMPETITION TELEOP", group="Iterative Opmode")
@@ -20,8 +22,13 @@ public class CompTeleOp extends BaseOpMode {
     DcMotor fr;
     DcMotor bl;
     DcMotor br;
+    DcMotor intakeMotor;
+    DcMotor slideMotorL;
+    DcMotor slideMotorR;
+    CRServo counterRoller;
+    Servo depositerDoor;
+    Servo depositer;
     Gyro gyro;
-
     PID pid;
 
 
@@ -36,8 +43,10 @@ public class CompTeleOp extends BaseOpMode {
         fr = BaseOpMode.hardware.get(DcMotor.class,"fr");
         br = BaseOpMode.hardware.get(DcMotor.class,"br");
         bl = BaseOpMode.hardware.get(DcMotor.class,"bl");
+        slideMotorL = BaseOpMode.hardware.get(DcMotor.class,"slideMotorL");
         gyro = new Gyro("imuA");
         pid = new PID(proportional,integral,derivative);
+        counterRoller = BaseOpMode.hardware.get(CRServo.class, "counterRoller");
 
 
     }
@@ -88,33 +97,36 @@ public class CompTeleOp extends BaseOpMode {
         fr.setPower((drive + strafe - turn) * speed);
         bl.setPower(-(drive + strafe + turn) * speed);
         br.setPower((drive - strafe - turn) * speed);
-//        bl.setPower((-(drive + strafe + turn) * speed) * 11/12);
-//        br.setPower(((drive - strafe - turn) * speed) * 11/12);
-//        if (driver2.rightTrigger.isPressed()) {
-//            //
-//            intakeMotor.setpower(0.8);
-//        }
-//        if (driver2.leftTrigger.isPressed()) {
-//            //intake out
-//            intakeMotor.setpower(-0.8);
-//        }
-//        if (driver2.rightBumper.isTapped()) {
-//
-//        }
-//        if (driver2.leftBumper.isTapped()) {
-//
-//        }
-//        if (driver2.dpad_down.isTapped()) {
-//
-//        }
-//            slideMotorL.setpower(driver2.leftStick.Y());
-//            slideMotorR.setpower(driver2.leftStick.X());
-//        if (driver2.triangle.isTapped()) {
-//
-//        }
-//        if (driver2.circle.isTapped()) {
-//
-//        }
+        bl.setPower((-(drive + strafe + turn) * speed) * 11/12);
+        br.setPower(((drive - strafe - turn) * speed) * 11/12);
+        if (driver2.rightTrigger.isPressed()) {
+            //
+            intakeMotor.setPower(0.8);
+            counterRoller.set(0.8);
+        }
+        if (driver2.leftTrigger.isPressed()) {
+            //intake out
+            intakeMotor.setPower(-0.8);
+            counterRoller.set(-0.8);
+
+        }
+        if (driver2.rightBumper.isTapped()) {
+            slideMotorL.setTargetPosition(100);
+            slideMotorR.setTargetPosition(100);
+            depositerDoor.setPosition(0);
+
+        }
+        if (driver2.leftBumper.isTapped()) {
+
+        }
+        if (driver2.dpad_down.isTapped()) {
+
+        }
+            slideMotorL.setPower(driver2.leftStick.Y());
+            slideMotorR.setPower(driver2.leftStick.X());
+        if (driver2.triangle.isTapped()) {
+
+        }
 
 
         BaseOpMode.addData("heading", gyro.getHeading());
