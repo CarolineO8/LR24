@@ -38,11 +38,11 @@ import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.proport
 
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.arcrobotics.ftclib.hardware.motors.CRServo;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -68,12 +68,14 @@ public class RedFrontAuto extends LinearOpMode {
     DcMotor fr;
     DcMotor bl;
     DcMotor br;
-    DcMotor intakeMotor;
+    Servo depositer;
+    Servo depositerDoor;
     DcMotor slideMotorL;
     DcMotor slideMotorR;
+    DcMotor intakeMotor;
     CRServo counterRoller;
-    Servo depositerDoor;
-    Servo depositer;
+
+    int slidePosition = 0;
     Gyro gyro;
 
 
@@ -110,6 +112,22 @@ public class RedFrontAuto extends LinearOpMode {
         bl = hardwareMap.get(DcMotor.class,"bl");
         bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        depositer = new Servo("depositer");
+        depositerDoor = new Servo("depositerDoor");
+        counterRoller = BaseOpMode.hardware.crservo.get("roll");
+        slideMotorL = BaseOpMode.hardware.get(DcMotor.class,"slideL");
+        slideMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideMotorL.setTargetPosition(0);
+        slideMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideMotorL.setPower(0.5);
+        slideMotorR = BaseOpMode.hardware.get(DcMotor.class,"slideR");
+        slideMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideMotorR.setTargetPosition(0);
+        slideMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideMotorR.setPower(0.5);
+        intakeMotor = BaseOpMode.hardware.get(DcMotor.class,"intake");
 
 
         gyro = new Gyro(hardwareMap);
@@ -178,7 +196,7 @@ public class RedFrontAuto extends LinearOpMode {
                         telemetry.update();
                         drive(1000, -1, 0, 0, 0.4);
                         drive(1500, 0, 0, 1, 0.2);
-                        //Deposit Purple Pixel
+                        counterRoller.setPower(1);
                         drive(1500, 0, 0, -1, 0.2);
                         restart = false;
 
@@ -267,7 +285,7 @@ public class RedFrontAuto extends LinearOpMode {
 
 
         while (Math.abs(distanceDriven) <= distance) {
-            distanceDriven = (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(br.getCurrentPosition()) + Math.abs(bl.getCurrentPosition())) /4;
+            distanceDriven = (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs((br.getCurrentPosition()) * 11/12) + Math.abs((bl.getCurrentPosition()) * 11/12)) /4;
             variable = variable + 0.1;
             //telemetry.addData("distancedriven", distanceDriven);
             //telemetry.addData("drive", drive);
@@ -287,8 +305,8 @@ public class RedFrontAuto extends LinearOpMode {
 //
             fl.setPower((drive - strafe + turn) * speed);
             fr.setPower((drive + strafe - turn) * speed);
-            bl.setPower((drive + strafe + turn) * speed);
-            br.setPower((drive - strafe - turn) * speed);
+            bl.setPower(((drive + strafe + turn) * speed) * 11/12);
+            br.setPower(((drive - strafe - turn) * speed) * 11/12);
 
 
 

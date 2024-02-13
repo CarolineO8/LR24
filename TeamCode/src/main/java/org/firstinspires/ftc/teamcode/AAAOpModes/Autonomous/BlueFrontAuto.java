@@ -275,7 +275,7 @@ public class BlueFrontAuto extends LinearOpMode {
 
 
         while (Math.abs(distanceDriven) <= distance) {
-            distanceDriven = (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(br.getCurrentPosition()) + Math.abs(bl.getCurrentPosition())) /4;
+            distanceDriven = (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs((br.getCurrentPosition()) * 11/12) + Math.abs((bl.getCurrentPosition()) * 11/12)) /4;
             variable = variable + 0.1;
             //telemetry.addData("distancedriven", distanceDriven);
             //telemetry.addData("drive", drive);
@@ -295,8 +295,8 @@ public class BlueFrontAuto extends LinearOpMode {
 //
             fl.setPower((drive - strafe + turn) * speed);
             fr.setPower((drive + strafe - turn) * speed);
-            bl.setPower((drive + strafe + turn) * speed);
-            br.setPower((drive - strafe - turn) * speed);
+            bl.setPower(((drive + strafe + turn) * speed) * 11/12);
+            br.setPower(((drive - strafe - turn) * speed) * 11/12);
 
 
 

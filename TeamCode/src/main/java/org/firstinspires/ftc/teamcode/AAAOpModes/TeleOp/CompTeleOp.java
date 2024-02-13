@@ -5,8 +5,8 @@ import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.integra
 import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.proportional;
 
 import com.arcrobotics.ftclib.geometry.Vector2d;
-import com.arcrobotics.ftclib.hardware.motors.CRServo;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.AAAOpModes.BaseOpMode;
@@ -22,12 +22,14 @@ public class CompTeleOp extends BaseOpMode {
     DcMotor fr;
     DcMotor bl;
     DcMotor br;
-    DcMotor intakeMotor;
+    Servo depositer;
+    Servo depositerDoor;
     DcMotor slideMotorL;
     DcMotor slideMotorR;
+    DcMotor intakeMotor;
     CRServo counterRoller;
-    Servo depositerDoor;
-    Servo depositer;
+
+    int slidePosition = 0;
     Gyro gyro;
     PID pid;
 
@@ -43,14 +45,30 @@ public class CompTeleOp extends BaseOpMode {
         fr = BaseOpMode.hardware.get(DcMotor.class,"fr");
         br = BaseOpMode.hardware.get(DcMotor.class,"br");
         bl = BaseOpMode.hardware.get(DcMotor.class,"bl");
-        slideMotorL = BaseOpMode.hardware.get(DcMotor.class,"slideMotorL");
+        depositer = new Servo("depositer");
+        depositerDoor = new Servo("depositerDoor");
+        counterRoller = BaseOpMode.hardware.crservo.get("roll");
+        slideMotorL = BaseOpMode.hardware.get(DcMotor.class,"slideL");
+        slideMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideMotorL.setTargetPosition(0);
+        slideMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideMotorL.setPower(0.5);
+        slideMotorR = BaseOpMode.hardware.get(DcMotor.class,"slideR");
+        slideMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideMotorR.setTargetPosition(0);
+        slideMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideMotorR.setPower(0.5);
+        intakeMotor = BaseOpMode.hardware.get(DcMotor.class,"intake");
         gyro = new Gyro("imuA");
         pid = new PID(proportional,integral,derivative);
-        counterRoller = BaseOpMode.hardware.get(CRServo.class, "counterRoller");
+
 
 
     }
-
+    boolean up = true;
+    boolean down = false;
     @Override
     public void externalLoop() {
         //After start
@@ -99,34 +117,72 @@ public class CompTeleOp extends BaseOpMode {
 //        br.setPower((drive - strafe - turn) * speed);
         bl.setPower((-(drive + strafe + turn) * speed) * 11/12);
         br.setPower(((drive - strafe - turn) * speed) * 11/12);
-        if (driver2.rightTrigger.isPressed()) {
-            //
-            intakeMotor.setPower(0.8);
-            counterRoller.set(0.8);
-        }
-        if (driver2.leftTrigger.isPressed()) {
-            //intake out
-            intakeMotor.setPower(-0.8);
-            counterRoller.set(-0.8);
-
-        }
-        if (driver2.rightBumper.isTapped()) {
-            slideMotorL.setTargetPosition(100);
-            slideMotorR.setTargetPosition(100);
-            depositerDoor.setPosition(0);
-
-        }
+//        slideMotorR.setTargetPosition(slidePosition);
+//        slideMotorL.setTargetPosition(slidePosition);
+        //After start
         if (driver2.leftBumper.isTapped()) {
-
+            //deposit
+            depositerDoor.setPosition(0.05);
         }
-        if (driver2.dpad_down.isTapped()) {
-
+        //LOOK HERE!!!!!!!!!!!!!!!
+        if (driver2.rightBumper.isTapped()) {
+            //transfer
+            slidePosition -= 200;
+            slideMotorR.setTargetPosition(slidePosition);
+            slideMotorL.setTargetPosition(slidePosition);
+            depositerDoor.setPosition(0);
+            slidePosition += 200;
+            slideMotorR.setTargetPosition(slidePosition);
+            slideMotorL.setTargetPosition(slidePosition);
         }
-            slideMotorL.setPower(driver2.leftStick.Y());
-            slideMotorR.setPower(driver2.leftStick.X());
-        if (driver2.triangle.isTapped()) {
-
+        if (driver2.rightTrigger.isToggled()){
+            //intake in
+            intakeMotor.setPower(-1);
+            counterRoller.setPower(-1);
         }
+        else if (driver2.leftTrigger.isToggled()) {
+            //intake out
+            intakeMotor.setPower(1);
+            counterRoller.setPower(1);
+        }
+        else {
+            //stop intake
+            intakeMotor.setPower(0);
+            counterRoller.setPower(0);
+        }
+        if (driver2.triangle.isTapped() && up) {
+            //initiate up
+            depositer.setPosition(0.95);
+            slidePosition -= 1000;
+            slideMotorR.setTargetPosition(slidePosition);
+            slideMotorL.setTargetPosition(slidePosition);
+            sleep(100);
+//            depositer.setPosition(0.55);
+            up = false;
+            down = true;
+        }
+        if (driver2.cross.isTapped() && down) {
+            //initiate down
+            up = true;
+            down = false;
+            depositerDoor.setPosition(0.15);
+            depositer.setPosition(0.95);
+            slidePosition += 1000;
+            slideMotorR.setTargetPosition(slidePosition);
+            slideMotorL.setTargetPosition(slidePosition);
+        }
+//        if (driver2.dpad_up.isTapped() && slidePosition <= -3000){
+//            slidePosition -= 100;
+//            slideMotorR.setTargetPosition(slidePosition);
+//            slideMotorL.setTargetPosition(slidePosition);
+//        }
+//        if(driver2.dpad_down.isTapped() && slidePosition >= -1000){
+//            slidePosition += 100;
+//            slideMotorR.setTargetPosition(slidePosition);
+//            slideMotorL.setTargetPosition(slidePosition);
+//        }
+
+        telemetry.update();
 
 
         BaseOpMode.addData("heading", gyro.getHeading());
