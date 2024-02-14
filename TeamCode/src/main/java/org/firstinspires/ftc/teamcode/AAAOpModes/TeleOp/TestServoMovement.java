@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.AAAOpModes.BaseOpMode;
 import org.firstinspires.ftc.teamcode.zLibraries.Utilities.HardwareDevices.Servo;
@@ -21,6 +22,8 @@ public class TestServoMovement extends BaseOpMode {
     CRServo counterRoller;
 
     int slidePosition = 0;
+
+    ElapsedTime time = new ElapsedTime();
 
 
 
@@ -46,30 +49,49 @@ public class TestServoMovement extends BaseOpMode {
     }
     boolean up = true;
     boolean down = false;
+    boolean transfer = false;
     @Override
     public void externalLoop() {
-//        slideMotorR.setTargetPosition(slidePosition);
-//        slideMotorL.setTargetPosition(slidePosition);
+        slideMotorR.setTargetPosition(slidePosition);
+        slideMotorL.setTargetPosition(slidePosition);
         //After start
         if (driver2.leftBumper.isTapped()) {
             //deposit
             depositerDoor.setPosition(0.05);
         }
+        if (driver2.circle.isTapped()) {
+            depositer.setPosition(0.95);
+            slideMotorR.setTargetPosition(-200);
+            slideMotorL.setTargetPosition(-200);
+        }
         //LOOK HERE!!!!!!!!!!!!!!!
         if (driver2.rightBumper.isTapped()) {
+            transfer = true;
+            time.reset();
             //transfer
-            slidePosition -= 200;
-            slideMotorR.setTargetPosition(slidePosition);
-            slideMotorL.setTargetPosition(slidePosition);
-            depositerDoor.setPosition(0);
-            slidePosition += 200;
-            slideMotorR.setTargetPosition(slidePosition);
-            slideMotorL.setTargetPosition(slidePosition);
         }
+
+        if(transfer){
+            if(time.seconds() > 0 && time.seconds() < 1){
+                slidePosition -= 200;
+            }
+            if(time.seconds() > 1){
+                depositerDoor.setPosition(0);
+            }
+            if(time.seconds() > 2){
+                slidePosition += 200;
+                transfer = false;
+            }
+        }
+        
+
         if (driver2.rightTrigger.isToggled()){
             //intake in
             intakeMotor.setPower(-1);
             counterRoller.setPower(-1);
+        }
+        if (driver2.square.isTapped()) {
+            depositer.setPosition(0.55);
         }
         else if (driver2.leftTrigger.isToggled()) {
             //intake out
