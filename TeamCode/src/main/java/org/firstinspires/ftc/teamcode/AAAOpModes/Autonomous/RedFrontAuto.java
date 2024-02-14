@@ -89,6 +89,9 @@ public class RedFrontAuto extends LinearOpMode {
     //BluePipeline pipeline = new BluePipeline();
     @Override
     public void runOpMode() {
+        //TODO ADD THIS LINE TO EVERY OPMODE
+          setOpMode(this);
+        //TODO THAT ONE ^
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
