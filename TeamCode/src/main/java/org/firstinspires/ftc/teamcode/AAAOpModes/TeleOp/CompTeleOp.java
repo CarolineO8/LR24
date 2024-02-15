@@ -8,6 +8,8 @@ import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 
 import org.firstinspires.ftc.teamcode.AAAOpModes.BaseOpMode;
 import org.firstinspires.ftc.teamcode.zLibraries.Utilities.Control.PID;
@@ -27,11 +29,14 @@ public class CompTeleOp extends BaseOpMode {
     DcMotor slideMotorL;
     DcMotor slideMotorR;
     DcMotor intakeMotor;
+    Servo launcher;
     CRServo counterRoller;
 
     int slidePosition = 0;
     Gyro gyro;
     PID pid;
+
+    ElapsedTime time = new ElapsedTime();
 
 
     boolean pid_on = false;
@@ -63,17 +68,20 @@ public class CompTeleOp extends BaseOpMode {
         intakeMotor = BaseOpMode.hardware.get(DcMotor.class,"intake");
         gyro = new Gyro("imuA");
         pid = new PID(proportional,integral,derivative);
+        launcher = new Servo("launcher");
 
 
 
     }
     boolean up = true;
     boolean down = false;
+    boolean transfer = false;
+    boolean slidesUp = false;
     @Override
     public void externalLoop() {
         //After start
-        double drive = -driver1.leftStick.Y();
-        double strafe = -driver1.leftStick.X();
+        double drive = driver1.leftStick.Y();
+        double strafe = driver1.leftStick.X();
         double turn = driver1.rightStick.X();
         double speed = 0.7;
 
@@ -120,27 +128,44 @@ public class CompTeleOp extends BaseOpMode {
 //        slideMotorR.setTargetPosition(slidePosition);
 //        slideMotorL.setTargetPosition(slidePosition);
         //After start
+        slideMotorR.setTargetPosition(slidePosition);
+        slideMotorL.setTargetPosition(slidePosition);
+        //After start
         if (driver2.leftBumper.isTapped()) {
             //deposit
             depositerDoor.setPosition(0.05);
         }
         //LOOK HERE!!!!!!!!!!!!!!!
-        if (driver2.rightBumper.isTapped()) {
+        if (driver2.rightBumper.isTapped() && up) {
             //transfer
-            slidePosition -= 200;
-            slideMotorR.setTargetPosition(slidePosition);
-            slideMotorL.setTargetPosition(slidePosition);
-            depositerDoor.setPosition(0);
-            slidePosition += 200;
-            slideMotorR.setTargetPosition(slidePosition);
-            slideMotorL.setTargetPosition(slidePosition);
+            transfer = true;
+            time.reset();
         }
+
+        if(transfer){
+            if(time.seconds() > 0 && time.seconds() < 0.5){
+                depositer.setPosition(0.95);
+                slidePosition = -100;
+            }
+            if(time.seconds() > 0.5){
+                depositerDoor.setPosition(0);
+            }
+            if(time.seconds() > 1){
+                slidePosition = 0;
+                transfer = false;
+            }
+        }
+
+        if(driver1.triangle.isTapped()){
+            gyro.resetHeading();
+        }
+
         if (driver2.rightTrigger.isToggled()){
             //intake in
             intakeMotor.setPower(-1);
             counterRoller.setPower(-1);
         }
-        else if (driver2.leftTrigger.isToggled()) {
+        else if (driver2.leftTrigger.isPressed()) {
             //intake out
             intakeMotor.setPower(1);
             counterRoller.setPower(1);
@@ -153,13 +178,19 @@ public class CompTeleOp extends BaseOpMode {
         if (driver2.triangle.isTapped() && up) {
             //initiate up
             depositer.setPosition(0.95);
-            slidePosition -= 1000;
-            slideMotorR.setTargetPosition(slidePosition);
-            slideMotorL.setTargetPosition(slidePosition);
-            sleep(100);
-//            depositer.setPosition(0.55);
+            slidesUp = true;
+            time.reset();
             up = false;
             down = true;
+        }
+        if (slidesUp) {
+            if (time.seconds() > 0) {
+                slidePosition -= 1000;
+            }
+            if (time.seconds() > 1) {
+                depositer.setPosition(0.6);
+                slidesUp = false;
+            }
         }
         if (driver2.cross.isTapped() && down) {
             //initiate down
@@ -167,20 +198,23 @@ public class CompTeleOp extends BaseOpMode {
             down = false;
             depositerDoor.setPosition(0.15);
             depositer.setPosition(0.95);
-            slidePosition += 1000;
+            slidePosition = 0;
             slideMotorR.setTargetPosition(slidePosition);
             slideMotorL.setTargetPosition(slidePosition);
         }
-//        if (driver2.dpad_up.isTapped() && slidePosition <= -3000){
-//            slidePosition -= 100;
-//            slideMotorR.setTargetPosition(slidePosition);
-//            slideMotorL.setTargetPosition(slidePosition);
-//        }
-//        if(driver2.dpad_down.isTapped() && slidePosition >= -1000){
-//            slidePosition += 100;
-//            slideMotorR.setTargetPosition(slidePosition);
-//            slideMotorL.setTargetPosition(slidePosition);
-//        }
+        if (driver2.dpad_up.isTapped() && slidePosition >= -3000){
+            slidePosition -= 100;
+            slideMotorR.setTargetPosition(slidePosition);
+            slideMotorL.setTargetPosition(slidePosition);
+        }
+        if (driver2.dpad_down.isTapped() && slidePosition <= -800){
+            slidePosition += 100;
+            slideMotorR.setTargetPosition(slidePosition);
+            slideMotorL.setTargetPosition(slidePosition);
+        }
+        if (driver2.circle.isTapped()) {
+            launcher.setPosition(0.1);
+        }
 
         telemetry.update();
 
