@@ -34,6 +34,7 @@ public class TestServoMovement extends BaseOpMode {
         depositer = new Servo("depositer");
         depositerDoor = new Servo("depositerDoor");
         counterRoller = BaseOpMode.hardware.crservo.get("roll");
+
         slideMotorL = BaseOpMode.hardware.get(DcMotor.class,"slideL");
         slideMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -46,6 +47,7 @@ public class TestServoMovement extends BaseOpMode {
         slideMotorR.setTargetPosition(0);
         slideMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideMotorR.setPower(0.5);
+
         intakeMotor = BaseOpMode.hardware.get(DcMotor.class,"intake");
         launcher = new Servo("launcher");
     }

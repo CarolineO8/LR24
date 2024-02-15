@@ -35,7 +35,7 @@ public abstract class BaseOpMode extends LinearOpMode {
      * Initialize opMode Utilities
      * @param opMode
      */
-    public static void setOpMode(BaseOpMode opMode){
+    public static void setOpMode(LinearOpMode opMode){
         hardware = opMode.hardwareMap;
 
         telemetree = opMode.telemetry;
