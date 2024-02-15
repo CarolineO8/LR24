@@ -20,6 +20,7 @@ public class TestServoMovement extends BaseOpMode {
     DcMotor slideMotorR;
     DcMotor intakeMotor;
     CRServo counterRoller;
+    Servo launcher;
 
     int slidePosition = 0;
 
@@ -46,10 +47,12 @@ public class TestServoMovement extends BaseOpMode {
         slideMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideMotorR.setPower(0.5);
         intakeMotor = BaseOpMode.hardware.get(DcMotor.class,"intake");
+        launcher = new Servo("launcher");
     }
     boolean up = true;
     boolean down = false;
     boolean transfer = false;
+    boolean slidesUp = false;
     @Override
     public void externalLoop() {
         slideMotorR.setTargetPosition(slidePosition);
@@ -59,41 +62,34 @@ public class TestServoMovement extends BaseOpMode {
             //deposit
             depositerDoor.setPosition(0.05);
         }
-        if (driver2.circle.isTapped()) {
-            depositer.setPosition(0.95);
-            slideMotorR.setTargetPosition(-200);
-            slideMotorL.setTargetPosition(-200);
-        }
         //LOOK HERE!!!!!!!!!!!!!!!
-        if (driver2.rightBumper.isTapped()) {
+        if (driver2.rightBumper.isTapped() && up) {
+            //transfer
             transfer = true;
             time.reset();
-            //transfer
         }
 
         if(transfer){
             if(time.seconds() > 0 && time.seconds() < 1){
-                slidePosition -= 200;
+                depositer.setPosition(0.95);
+                slidePosition = -100;
             }
             if(time.seconds() > 1){
                 depositerDoor.setPosition(0);
             }
             if(time.seconds() > 2){
-                slidePosition += 200;
+                slidePosition = 0;
                 transfer = false;
             }
         }
-        
+
 
         if (driver2.rightTrigger.isToggled()){
             //intake in
             intakeMotor.setPower(-1);
             counterRoller.setPower(-1);
         }
-        if (driver2.square.isTapped()) {
-            depositer.setPosition(0.55);
-        }
-        else if (driver2.leftTrigger.isToggled()) {
+        else if (driver2.leftTrigger.isPressed()) {
             //intake out
             intakeMotor.setPower(1);
             counterRoller.setPower(1);
@@ -106,13 +102,19 @@ public class TestServoMovement extends BaseOpMode {
         if (driver2.triangle.isTapped() && up) {
             //initiate up
             depositer.setPosition(0.95);
-            slidePosition -= 1000;
-            slideMotorR.setTargetPosition(slidePosition);
-            slideMotorL.setTargetPosition(slidePosition);
-            sleep(100);
-//            depositer.setPosition(0.55);
+            slidesUp = true;
+            time.reset();
             up = false;
             down = true;
+        }
+        if (slidesUp) {
+            if (time.seconds() > 0) {
+                slidePosition -= 1000;
+            }
+            if (time.seconds() > 1) {
+                depositer.setPosition(0.6);
+                slidesUp = false;
+            }
         }
         if (driver2.cross.isTapped() && down) {
             //initiate down
@@ -120,20 +122,23 @@ public class TestServoMovement extends BaseOpMode {
             down = false;
             depositerDoor.setPosition(0.15);
             depositer.setPosition(0.95);
-            slidePosition += 1000;
+            slidePosition = 0;
             slideMotorR.setTargetPosition(slidePosition);
             slideMotorL.setTargetPosition(slidePosition);
         }
-//        if (driver2.dpad_up.isTapped() && slidePosition <= -3000){
-//            slidePosition -= 100;
-//            slideMotorR.setTargetPosition(slidePosition);
-//            slideMotorL.setTargetPosition(slidePosition);
-//        }
-//        if(driver2.dpad_down.isTapped() && slidePosition >= -1000){
-//            slidePosition += 100;
-//            slideMotorR.setTargetPosition(slidePosition);
-//            slideMotorL.setTargetPosition(slidePosition);
-//        }
+        if (driver2.dpad_up.isTapped() && slidePosition >= -3000){
+            slidePosition -= 100;
+            slideMotorR.setTargetPosition(slidePosition);
+            slideMotorL.setTargetPosition(slidePosition);
+        }
+        if (driver2.dpad_down.isTapped() && slidePosition <= -800){
+            slidePosition += 100;
+            slideMotorR.setTargetPosition(slidePosition);
+            slideMotorL.setTargetPosition(slidePosition);
+        }
+        if (driver2.circle.isTapped()) {
+            launcher.setPosition(0.1);
+        }
 
         telemetry.update();
     }
