@@ -52,23 +52,23 @@ public class CompTeleOp extends BaseOpMode {
         bl = BaseOpMode.hardware.get(DcMotor.class,"bl");
         depositer = new Servo("depositer");
         depositerDoor = new Servo("depositerDoor");
+        launcher = new Servo("launcher");
         counterRoller = BaseOpMode.hardware.crservo.get("roll");
         slideMotorL = BaseOpMode.hardware.get(DcMotor.class,"slideL");
         slideMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slideMotorL.setTargetPosition(0);
         slideMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slideMotorL.setPower(0.5);
+        slideMotorL.setPower(0.8);
         slideMotorR = BaseOpMode.hardware.get(DcMotor.class,"slideR");
         slideMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slideMotorR.setTargetPosition(0);
         slideMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slideMotorR.setPower(0.5);
+        slideMotorR.setPower(0.8);
         intakeMotor = BaseOpMode.hardware.get(DcMotor.class,"intake");
         gyro = new Gyro("imuA");
         pid = new PID(proportional,integral,derivative);
-        launcher = new Servo("launcher");
 
 
 
@@ -76,14 +76,17 @@ public class CompTeleOp extends BaseOpMode {
     boolean up = true;
     boolean down = false;
     boolean transfer = false;
+    boolean reverseTransfer = false;
     boolean slidesUp = false;
+    double speed;
+
+    boolean slidesDown;
     @Override
     public void externalLoop() {
         //After start
         double drive = driver1.leftStick.Y();
         double strafe = driver1.leftStick.X();
         double turn = driver1.rightStick.X();
-        double speed = 0.7;
 
         Vector2d driveVector = new Vector2d(strafe, drive);
         Vector2d rotatedVector = driveVector.rotateBy(Math.toDegrees(270-gyro.getHeading()));
@@ -112,11 +115,14 @@ public class CompTeleOp extends BaseOpMode {
         pid.setConstants(proportional,integral,derivative);
         pid_on_last_cycle = pid_on;
 
-        if (driver1.rightBumper.isPressed()) {
+        if (driver1.rightTrigger.isPressed() || slidePosition <= -50) {
+            speed = 0.4;
+        }
+        else if (driver1.rightBumper.isPressed()) {
             speed = 0.2;
         }
-        else if (driver1.rightTrigger.isPressed()) {
-            speed = 0.4;
+        else {
+            speed = 0.7;
         }
 
         fl.setPower(-(drive - strafe + turn) * speed);
@@ -134,33 +140,26 @@ public class CompTeleOp extends BaseOpMode {
         if (driver2.leftBumper.isTapped()) {
             //deposit
             depositerDoor.setPosition(0.05);
+            multTelemetry.addData("door", "should move");
         }
+
         //LOOK HERE!!!!!!!!!!!!!!!
         if (driver2.rightBumper.isTapped() && up) {
             //transfer
             transfer = true;
+            depositer.setPosition(1);
             time.reset();
         }
-
-        if(transfer){
-            if(time.seconds() > 0 && time.seconds() < 0.5){
-                depositer.setPosition(0.95);
-                slidePosition = -100;
-            }
-            if(time.seconds() > 0.5){
+        if (transfer) {
+            if (time.seconds() > 0.5) {
                 depositerDoor.setPosition(0);
-            }
-            if(time.seconds() > 1){
-                slidePosition = 0;
                 transfer = false;
             }
         }
-
         if(driver1.triangle.isTapped()){
             gyro.resetHeading();
         }
-
-        if (driver2.rightTrigger.isToggled()){
+        if (driver2.rightTrigger.isPressed()){
             //intake in
             intakeMotor.setPower(-1);
             counterRoller.setPower(-1);
@@ -177,18 +176,23 @@ public class CompTeleOp extends BaseOpMode {
         }
         if (driver2.triangle.isTapped() && up) {
             //initiate up
-            depositer.setPosition(0.95);
+            depositer.setPosition(0.85);
             slidesUp = true;
             time.reset();
             up = false;
             down = true;
         }
+        if (driver2.touchpad.isTapped()) {
+            depositer.setPosition(0.85);
+            depositerDoor.setPosition(0.1);
+        }
         if (slidesUp) {
             if (time.seconds() > 0) {
-                slidePosition -= 1000;
+                slidePosition = -1000;
             }
             if (time.seconds() > 1) {
-                depositer.setPosition(0.6);
+                depositerDoor.setPosition(0);
+                depositer.setPosition(0.55);
                 slidesUp = false;
             }
         }
@@ -196,24 +200,27 @@ public class CompTeleOp extends BaseOpMode {
             //initiate down
             up = true;
             down = false;
-            depositerDoor.setPosition(0.15);
-            depositer.setPosition(0.95);
-            slidePosition = 0;
-            slideMotorR.setTargetPosition(slidePosition);
-            slideMotorL.setTargetPosition(slidePosition);
+            slidesDown = true;
+            time.reset();
         }
-        if (driver2.dpad_up.isTapped() && slidePosition >= -3000){
+        if (slidesDown) {
+            if (time.seconds() > 0) {
+                depositerDoor.setPosition(0.15);
+                depositer.setPosition(0.85);
+            }
+            if (time.seconds() > 0.5) {
+                slidePosition = 0;
+                slidesDown = false;
+            }
+        }
+        if (driver2.dpad_up.isTapped() && slidePosition >= -1000){
             slidePosition -= 100;
-            slideMotorR.setTargetPosition(slidePosition);
-            slideMotorL.setTargetPosition(slidePosition);
         }
-        if (driver2.dpad_down.isTapped() && slidePosition <= -800){
+        if (driver2.dpad_down.isTapped() && slidePosition <= 0){
             slidePosition += 100;
-            slideMotorR.setTargetPosition(slidePosition);
-            slideMotorL.setTargetPosition(slidePosition);
         }
-        if (driver2.circle.isTapped()) {
-            launcher.setPosition(0.1);
+        if (driver2.square.isTapped()) {
+            launcher.setPosition(0.4);
         }
 
         telemetry.update();

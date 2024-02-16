@@ -74,6 +74,7 @@ public class BlueFrontAuto extends LinearOpMode {
     CRServo counterRoller;
     Servo depositerDoor;
     Servo depositer;
+    ElapsedTime time = new ElapsedTime();
     Gyro gyro;
 
 

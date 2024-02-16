@@ -69,6 +69,7 @@ public class BlueBackAuto extends LinearOpMode {
     Servo depositerDoor;
     Servo depositer;
     Gyro gyro;
+    ElapsedTime time = new ElapsedTime();
 
 
     PID pid;

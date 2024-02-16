@@ -69,6 +69,7 @@ public class RedBackAuto extends LinearOpMode {
     CRServo counterRoller;
     Servo depositerDoor;
     Servo depositer;
+    ElapsedTime time = new ElapsedTime();
     Gyro gyro;
 
 
