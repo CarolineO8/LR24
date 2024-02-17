@@ -76,7 +76,6 @@ public class CompTeleOp extends BaseOpMode {
     boolean up = true;
     boolean down = false;
     boolean transfer = false;
-    boolean reverseTransfer = false;
     boolean slidesUp = false;
     double speed;
 
@@ -209,7 +208,7 @@ public class CompTeleOp extends BaseOpMode {
                 depositer.setPosition(0.85);
             }
             if (time.seconds() > 0.5) {
-                slidePosition = 0;
+                slidePosition = 10;
                 slidesDown = false;
             }
         }
