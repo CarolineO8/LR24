@@ -61,9 +61,9 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 
-@Autonomous(name="Red Front Auto: Linear OpMode", group="Linear OpMode")
+@Autonomous(name="Red 50 Point Front Auto", group="Linear OpMode")
 //@Disabled
-public class RedFrontAuto extends LinearOpMode {
+public class Red50Point extends LinearOpMode {
     DcMotor fl;
     DcMotor fr;
     DcMotor bl;
@@ -192,24 +192,54 @@ public class RedFrontAuto extends LinearOpMode {
             }
             drive(200, -1, 0, 0, fast);
             drive(400, 0, 1, 0, fast);
+            if (teamPropPosition == 1) {
+                //left position
 
-        if (teamPropPosition == 3) {
-            drive(100, -1, 0, 0, fast);
-            drive(850, 0, 0, 1, fast);
-            drive(900, -1, 0, 0, fast);
-        } else {
-            drive(550, -1, 0, 0, fast);
-            drive(900, 0, 0, 1, fast);
-            drive(900, -1, 0, 0, fast);
-        }
+                telemetry.addData("position", "left");
+                telemetry.update();
+                drive(1150, -1, 0, 0, 0.4);
+                drive(750, 0, 0, -1, 0.2);
+                //Deposit Purple Pixel
+                purple.setPosition(0.4);
+                drive(725, 0, 0, 1, 0.2);
 
-//                if (teamPropPosition == 3) {
-//                    time.reset();
-//                    while (time.seconds() < 2) {
-//                        counterRoller.setPower(1);
-//                    }
-//                    counterRoller.setPower(0);
-//                }
+            } else if (teamPropPosition == 2) {
+                //middle position
+                telemetry.addData("position", "middle");
+                telemetry.update();
+                drive(530, -1, 0, 0, 0.4);
+                //Deposit Purple Pixel
+                time.reset();
+                while (time.seconds() <= 1) {
+                    purple.setPosition(0.4);
+                }
+                drive(120, 1, 0, 0, 0.4);
+
+            } else if (teamPropPosition == 3) {
+                //right position
+                telemetry.addData("position", "right");
+                telemetry.update();
+                drive(1150, -1, 0, 0, 0.4);
+                drive(750, 0, 0, 1, 0.2);
+                //Deposit Purple Pixel
+                purple.setPosition(0.4);
+                drive(725, 0, 0, -1, 0.2);
+
+            }
+
+            if (teamPropPosition == 3) {
+//            drive(100, -1, 0, 0, fast);
+                drive(850, 0, 0, 1, fast);
+                drive(900, -1, 0, 0, fast);
+            } else if (teamPropPosition == 2) {
+                drive(850, 0, 0, 1, fast);
+                drive(900, -1, 0, 0, fast);
+            } else {
+//            drive(550, -1, 0, 0, fast);
+                drive(900, 0, 0, 1, fast);
+                drive(900, -1, 0, 0, fast);
+            }
+
 
             if (teamPropPosition == 1) {
                 //left position
@@ -249,8 +279,8 @@ public class RedFrontAuto extends LinearOpMode {
                     else if (time.seconds() > 0) {
                         depositerDoor.setPosition(0.07);
                     }
-                        slideMotorR.setTargetPosition(slidePosition);
-                        slideMotorL.setTargetPosition(slidePosition);
+                    slideMotorR.setTargetPosition(slidePosition);
+                    slideMotorL.setTargetPosition(slidePosition);
                 }
                 drive(200, 1, 0, 0, fast);
                 drive(750, 0, 0, 1, fast);
@@ -260,7 +290,9 @@ public class RedFrontAuto extends LinearOpMode {
                 //middle position
                 telemetry.addData("position","middle");
                 telemetry.update();
-                drive(700, -1, 0, 0, fast);
+                drive(350, -1, 0, 0, fast);
+                drive(100, 0, -1, 0, fast);
+                drive(300, -1, 0, 0, fast);
                 // Deposit yellow Pixel
                 depositer.setPosition(0.85);
                 time.reset();

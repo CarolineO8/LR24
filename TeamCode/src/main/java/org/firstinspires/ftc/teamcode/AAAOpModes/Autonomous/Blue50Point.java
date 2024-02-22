@@ -61,22 +61,21 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 
-@Autonomous(name="Red Front Auto: Linear OpMode", group="Linear OpMode")
+@Autonomous(name="Blue 50 Point Front Auto", group="Linear OpMode")
 //@Disabled
-public class RedFrontAuto extends LinearOpMode {
+public class Blue50Point extends LinearOpMode {
     DcMotor fl;
     DcMotor fr;
     DcMotor bl;
     DcMotor br;
-    Servo purple;
-    Servo depositer;
-    Servo depositerDoor;
+    DcMotor intakeMotor;
     DcMotor slideMotorL;
     DcMotor slideMotorR;
-    DcMotor intakeMotor;
+    Servo purple;
     CRServo counterRoller;
+    Servo depositerDoor;
+    Servo depositer;
     ElapsedTime time = new ElapsedTime();
-
     int slidePosition = 0;
     Gyro gyro;
 
@@ -87,15 +86,15 @@ public class RedFrontAuto extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private OpenCvCamera camera;
-    RedPipeline pipeline = new RedPipeline();
-
-
-    //BluePipeline pipeline = new BluePipeline();
+    //RedPipeline pipeline = new RedPipeline();
+    BluePipeline pipeline = new BluePipeline();
     @Override
     public void runOpMode() {
         //TODO ADD THIS LINE TO EVERY OPMODE
         setOpMode(this);
         //TODO THAT ONE ^
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -147,6 +146,7 @@ public class RedFrontAuto extends LinearOpMode {
         pid = new PID(proportional,integral,derivative);
 
 
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
@@ -183,42 +183,73 @@ public class RedFrontAuto extends LinearOpMode {
 
         double fast = 0.4;
 
+
         if (opModeIsActive()) {
             //CODE THAT RUNS AFTER START
-
             int teamPropPosition = 0;
             while (teamPropPosition == 0) {
                 teamPropPosition = pipeline.getRectPos();
             }
             drive(200, -1, 0, 0, fast);
-            drive(400, 0, 1, 0, fast);
+            drive(400, 0, -1, 0, fast);
 
-        if (teamPropPosition == 3) {
-            drive(100, -1, 0, 0, fast);
-            drive(850, 0, 0, 1, fast);
-            drive(900, -1, 0, 0, fast);
-        } else {
-            drive(550, -1, 0, 0, fast);
-            drive(900, 0, 0, 1, fast);
-            drive(900, -1, 0, 0, fast);
-        }
+            teamPropPosition = pipeline.getRectPos();
+            if (teamPropPosition == 1) {
+                //left position
 
-//                if (teamPropPosition == 3) {
-//                    time.reset();
-//                    while (time.seconds() < 2) {
-//                        counterRoller.setPower(1);
-//                    }
-//                    counterRoller.setPower(0);
-//                }
+                telemetry.addData("position", "left");
+                telemetry.update();
+                drive(1150, -1, 0, 0, 0.4);
+                drive(750, 0, 0, 1, 0.2);
+                //Deposit Purple Pixel
+                purple.setPosition(0.5);
+                drive(725, 0, 0, -1, 0.2);
+
+
+
+            } else if (teamPropPosition == 2) {
+                //middle position
+                telemetry.addData("position", "middle");
+                telemetry.update();
+                drive(1150, -1, 0, 0, 0.4);
+                //Deposit Purple Pixel
+                purple.setPosition(0.5);
+
+
+
+            } else if (teamPropPosition == 3) {
+                //right position
+                telemetry.addData("position", "right");
+                telemetry.update();
+                drive(1150, -1, 0, 0, 0.4);
+                drive(750, 0, 0, -1, 0.2);
+                //Deposit Purple Pixel
+                purple.setPosition(0.5);
+                drive(725, 0, 0, 1, 0.2);
+
+            }
+
+
+
+            if (teamPropPosition == 1) {
+                drive(800, 1, 0, 0, fast);
+                drive(850, 0, 0, -1, fast);
+                drive(900, -1, 0, 0, fast);
+            } else if (teamPropPosition == 3) {
+                drive(400, -1, 0, 0, fast);
+                drive(900, 0, 0, -1, fast);
+                drive(900, -1, 0, 0, fast);
+            } else {
+                drive(550, -1, 0, 0, fast);
+                drive(900, 0, 0, -1, fast);
+                drive(900, -1, 0, 0, fast);
+            }
 
             if (teamPropPosition == 1) {
                 //left position
                 telemetry.addData("position","left");
                 telemetry.update();
-                drive(300, -1, 0, 0, fast);
-                drive(300, 0, -1, 0, fast);
-                drive(100, 0, 0, -1, fast);
-                drive(400, -1, 0, 0, fast);
+                drive(700, -1, 0, 0, fast);
                 // Deposit yellow Pixel
                 depositer.setPosition(0.85);
                 time.reset();
@@ -235,26 +266,28 @@ public class RedFrontAuto extends LinearOpMode {
                     slideMotorR.setTargetPosition(slidePosition);
                     slideMotorL.setTargetPosition(slidePosition);
                 }
-                depositerDoor.setPosition(0.07);
+                depositerDoor.setPosition(0.05);
                 time.reset();
-                while (time.seconds() <= 3) {
-                    if (time.seconds() > 2) {
+                while (time.seconds() <= 5) {
+                    if (time.seconds() > 4) {
                         depositer.setPosition(0.85);
                         slidePosition = 10;
                     }
-                    else if (time.seconds() > 1) {
+                    else if (time.seconds() > 3) {
                         depositerDoor.setPosition(0.15);
                         slidePosition = -1000;
                     }
                     else if (time.seconds() > 0) {
-                        depositerDoor.setPosition(0.07);
+                        depositerDoor.setPosition(0.05);
                     }
-                        slideMotorR.setTargetPosition(slidePosition);
-                        slideMotorL.setTargetPosition(slidePosition);
+                    slideMotorR.setTargetPosition(slidePosition);
+                    slideMotorL.setTargetPosition(slidePosition);
                 }
                 drive(200, 1, 0, 0, fast);
-                drive(750, 0, 0, 1, fast);
-                drive(1800, -1, 0, 0, fast);
+                drive(725, 0, 0, -1, fast);
+                drive(850, -1, 0, 0, fast);
+
+
 
             } else if (teamPropPosition == 2) {
                 //middle position
@@ -277,32 +310,37 @@ public class RedFrontAuto extends LinearOpMode {
                     slideMotorR.setTargetPosition(slidePosition);
                     slideMotorL.setTargetPosition(slidePosition);
                 }
-                depositerDoor.setPosition(0.07);
+                depositerDoor.setPosition(0.05);
                 time.reset();
-                while (time.seconds() <= 3) {
-                    if (time.seconds() > 2) {
+                while (time.seconds() <= 5) {
+                    if (time.seconds() > 4) {
                         depositer.setPosition(0.85);
                         slidePosition = 10;
                     }
-                    else if (time.seconds() > 1) {
+                    else if (time.seconds() > 3) {
                         depositerDoor.setPosition(0.15);
                         slidePosition = -1000;
                     }
                     else if (time.seconds() > 0) {
-                        depositerDoor.setPosition(0.07);
+                        depositerDoor.setPosition(0.05);
                     }
                     slideMotorR.setTargetPosition(slidePosition);
                     slideMotorL.setTargetPosition(slidePosition);
                 }
                 drive(200, 1, 0, 0, fast);
-                drive(750, 0, 0, 1, fast);
+                drive(725, 0, 0, -1, fast);
                 drive(1200, -1, 0, 0, fast);
+
+
 
             } else if (teamPropPosition == 3) {
                 //right position
                 telemetry.addData("position","right");
                 telemetry.update();
-                drive(700, -1, 0, 0, fast);
+                drive(300, -1, 0, 0, fast);
+                drive(400, 0, 1, 0, fast);
+                drive(100, 0, 0, 1, fast);
+                drive(400, -1, 0, 0, fast);
                 // Deposit yellow Pixel
                 depositer.setPosition(0.85);
                 time.reset();
@@ -319,30 +357,31 @@ public class RedFrontAuto extends LinearOpMode {
                     slideMotorR.setTargetPosition(slidePosition);
                     slideMotorL.setTargetPosition(slidePosition);
                 }
-                depositerDoor.setPosition(0.07);
+                depositerDoor.setPosition(0.05);
                 time.reset();
-                while (time.seconds() <= 3) {
-                    if (time.seconds() > 2) {
+                while (time.seconds() <= 5) {
+                    if (time.seconds() > 4) {
                         depositer.setPosition(0.85);
                         slidePosition = 10;
                     }
-                    else if (time.seconds() > 1) {
+                    else if (time.seconds() > 3) {
                         depositerDoor.setPosition(0.15);
                         slidePosition = -1000;
                     }
                     else if (time.seconds() > 0) {
-                        depositerDoor.setPosition(0.07);
+                        depositerDoor.setPosition(0.05);
                     }
                     slideMotorR.setTargetPosition(slidePosition);
                     slideMotorL.setTargetPosition(slidePosition);
                 }
                 drive(200, 1, 0, 0, fast);
-                drive(750, 0, 0, 1, fast);
-                drive(700, -1, 0, 0, fast);
+                drive(725, 0, 0, -1, fast);
+                drive(1800, -1, 0, 0, fast);
+
 
             }
 
-            telemetry.update();
+
 
         }
 
@@ -375,6 +414,9 @@ public class RedFrontAuto extends LinearOpMode {
             //telemetry.addData("strafe", strafe);
             //telemetry.addData("turn", turn);
             //telemetry.addData("speed", speed);
+            telemetry.addData("variable", variable);
+            telemetry.update();
+
 
 
 

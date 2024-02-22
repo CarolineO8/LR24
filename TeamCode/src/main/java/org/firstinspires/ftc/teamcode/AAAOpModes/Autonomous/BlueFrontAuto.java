@@ -71,6 +71,7 @@ public class BlueFrontAuto extends LinearOpMode {
     DcMotor intakeMotor;
     DcMotor slideMotorL;
     DcMotor slideMotorR;
+    Servo purple;
     CRServo counterRoller;
     Servo depositerDoor;
     Servo depositer;
@@ -117,6 +118,7 @@ public class BlueFrontAuto extends LinearOpMode {
         bl = hardwareMap.get(DcMotor.class,"bl");
         bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        purple = BaseOpMode.hardware.servo.get("purple");
         depositer = BaseOpMode.hardware.servo.get("depositer");
         depositerDoor = BaseOpMode.hardware.servo.get("depositerDoor");
         counterRoller = BaseOpMode.hardware.crservo.get("roll");
@@ -181,6 +183,7 @@ public class BlueFrontAuto extends LinearOpMode {
 
         double fast = 0.4;
 
+
         if (opModeIsActive()) {
             //CODE THAT RUNS AFTER START
             int teamPropPosition = 0;
@@ -190,9 +193,8 @@ public class BlueFrontAuto extends LinearOpMode {
             drive(200, -1, 0, 0, fast);
             drive(400, 0, -1, 0, fast);
 
-
             if (teamPropPosition == 1) {
-                drive(175, -1, 0, 0, fast);
+                drive(800, 1, 0, 0, fast);
                 drive(850, 0, 0, -1, fast);
                 drive(900, -1, 0, 0, fast);
             } else if (teamPropPosition == 3) {
