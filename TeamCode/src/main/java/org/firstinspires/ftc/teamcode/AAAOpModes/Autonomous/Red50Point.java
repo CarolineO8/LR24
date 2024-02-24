@@ -197,46 +197,57 @@ public class Red50Point extends LinearOpMode {
 
                 telemetry.addData("position", "left");
                 telemetry.update();
-                drive(1150, -1, 0, 0, 0.4);
-                drive(750, 0, 0, -1, 0.2);
+                drive(100, 0, 0, 1, fast);
+                drive(600, -1, 0, 0, fast);
+                drive(750, 0, 0, -1, fast);
+                drive(200, -1, 0, 0, fast);
                 //Deposit Purple Pixel
-                purple.setPosition(0.4);
-                drive(725, 0, 0, 1, 0.2);
+                time.reset();
+                while (time.seconds() <= 1) {
+                    purple.setPosition(0.35);
+                }
+                drive(300, 1, 0, 0, fast);
+                drive(725, 0, 0, 1, fast);
 
             } else if (teamPropPosition == 2) {
                 //middle position
                 telemetry.addData("position", "middle");
                 telemetry.update();
-                drive(530, -1, 0, 0, 0.4);
+                drive(580, -1, 0, 0, fast);
+                drive(100, 0, 1, 0, fast);
                 //Deposit Purple Pixel
                 time.reset();
                 while (time.seconds() <= 1) {
                     purple.setPosition(0.4);
                 }
-                drive(120, 1, 0, 0, 0.4);
+                drive(115, 1, 0, 0, fast);
 
             } else if (teamPropPosition == 3) {
                 //right position
                 telemetry.addData("position", "right");
                 telemetry.update();
-                drive(1150, -1, 0, 0, 0.4);
-                drive(750, 0, 0, 1, 0.2);
+                drive(180, 0, 1, 0, fast);
+                drive(150, 0, 0, 1, fast);
+                drive(200, -1, 0, 0, fast);
                 //Deposit Purple Pixel
-                purple.setPosition(0.4);
-                drive(725, 0, 0, -1, 0.2);
+                time.reset();
+                while (time.seconds() <= 1) {
+                    purple.setPosition(0.4);
+                }
+                drive(200, 1, 0, 0, fast);
 
             }
 
             if (teamPropPosition == 3) {
-//            drive(100, -1, 0, 0, fast);
-                drive(850, 0, 0, 1, fast);
+                drive(100, 1, 0, 0, fast);
+                drive(600, 0, 0, 1, fast);
                 drive(900, -1, 0, 0, fast);
             } else if (teamPropPosition == 2) {
                 drive(850, 0, 0, 1, fast);
                 drive(900, -1, 0, 0, fast);
             } else {
 //            drive(550, -1, 0, 0, fast);
-                drive(900, 0, 0, 1, fast);
+                drive(800, 0, 0, 1, fast);
                 drive(900, -1, 0, 0, fast);
             }
 
@@ -248,13 +259,13 @@ public class Red50Point extends LinearOpMode {
                 drive(300, -1, 0, 0, fast);
                 drive(300, 0, -1, 0, fast);
                 drive(100, 0, 0, -1, fast);
-                drive(400, -1, 0, 0, fast);
+                drive(200, -1, 0, 0, fast);
                 // Deposit yellow Pixel
                 depositer.setPosition(0.85);
                 time.reset();
                 while (time.seconds() <= 3) {
                     if (time.seconds() > 2) {
-                        slidePosition = -800;
+                        slidePosition = -700;
                     }else if (time.seconds() > 1) {
                         depositerDoor.setPosition(0);
                         depositer.setPosition(0.55);
@@ -284,21 +295,21 @@ public class Red50Point extends LinearOpMode {
                 }
                 drive(200, 1, 0, 0, fast);
                 drive(750, 0, 0, 1, fast);
-                drive(1800, -1, 0, 0, fast);
+                drive(1700, -1, 0, 0, fast);
 
             } else if (teamPropPosition == 2) {
                 //middle position
                 telemetry.addData("position","middle");
                 telemetry.update();
                 drive(350, -1, 0, 0, fast);
-                drive(100, 0, -1, 0, fast);
+                drive(200, 0, -1, 0, fast);
                 drive(300, -1, 0, 0, fast);
                 // Deposit yellow Pixel
                 depositer.setPosition(0.85);
                 time.reset();
                 while (time.seconds() <= 3) {
                     if (time.seconds() > 2) {
-                        slidePosition = -800;
+                        slidePosition = -700;
                     }else if (time.seconds() > 1) {
                         depositerDoor.setPosition(0);
                         depositer.setPosition(0.55);
@@ -328,19 +339,21 @@ public class Red50Point extends LinearOpMode {
                 }
                 drive(200, 1, 0, 0, fast);
                 drive(750, 0, 0, 1, fast);
-                drive(1200, -1, 0, 0, fast);
+                drive(1100, -1, 0, 0, fast);
 
             } else if (teamPropPosition == 3) {
                 //right position
                 telemetry.addData("position","right");
                 telemetry.update();
-                drive(700, -1, 0, 0, fast);
+                drive(400, 0, -1, 0, fast);
+//                drive(300, 0, 0, -1, fast);
+                drive(300, -1, 0, 0, fast);
                 // Deposit yellow Pixel
                 depositer.setPosition(0.85);
                 time.reset();
                 while (time.seconds() <= 3) {
                     if (time.seconds() > 2) {
-                        slidePosition = -800;
+                        slidePosition = -700;
                     }else if (time.seconds() > 1) {
                         depositerDoor.setPosition(0);
                         depositer.setPosition(0.55);

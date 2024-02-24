@@ -191,71 +191,80 @@ public class Blue50Point extends LinearOpMode {
                 teamPropPosition = pipeline.getRectPos();
             }
             drive(200, -1, 0, 0, fast);
-            drive(400, 0, -1, 0, fast);
-
-            teamPropPosition = pipeline.getRectPos();
+            drive(300, 0, -1, 0, fast);
             if (teamPropPosition == 1) {
                 //left position
-
                 telemetry.addData("position", "left");
                 telemetry.update();
-                drive(1150, -1, 0, 0, 0.4);
-                drive(750, 0, 0, 1, 0.2);
+                drive(250, 0, 0, -1, fast);
+                drive(450, 0, -1, 0, fast);
+//                drive(50, 0, 0, -1, fast);
+                drive(250, -1, 0, 0, fast);
                 //Deposit Purple Pixel
-                purple.setPosition(0.5);
-                drive(725, 0, 0, -1, 0.2);
-
-
-
+                time.reset();
+                while (time.seconds() <= 1) {
+                    purple.setPosition(0.4);
+                }
+                drive(200, 1, 0, 0, fast);
             } else if (teamPropPosition == 2) {
                 //middle position
                 telemetry.addData("position", "middle");
                 telemetry.update();
-                drive(1150, -1, 0, 0, 0.4);
+                drive(580, -1, 0, 0, fast);
+                drive(100, 0, -1, 0, fast);
                 //Deposit Purple Pixel
-                purple.setPosition(0.5);
-
-
+                time.reset();
+                while (time.seconds() <= 1) {
+                    purple.setPosition(0.4);
+                }
+                drive(115, 1, 0, 0, fast);
 
             } else if (teamPropPosition == 3) {
                 //right position
                 telemetry.addData("position", "right");
                 telemetry.update();
-                drive(1150, -1, 0, 0, 0.4);
-                drive(750, 0, 0, -1, 0.2);
+                drive(100, 0, 0, -1, fast);
+                drive(540, -1, 0, 0, fast);
+                drive(750, 0, 0, 1, fast);
+                drive(100, -1, 0, 0, fast);
                 //Deposit Purple Pixel
-                purple.setPosition(0.5);
-                drive(725, 0, 0, 1, 0.2);
-
+                time.reset();
+                while (time.seconds() <= 1) {
+                    purple.setPosition(0.35);
+                }
+                drive(340, 1, 0, 0, fast);
+                drive(725, 0, 0, -1, fast);
             }
 
-
-
-            if (teamPropPosition == 1) {
-                drive(800, 1, 0, 0, fast);
+            if (teamPropPosition == 3) {
+                drive(800, 0, 0, -1, fast);
+                drive(900, -1, 0, 0, fast);
+            } else if (teamPropPosition == 2) {
                 drive(850, 0, 0, -1, fast);
                 drive(900, -1, 0, 0, fast);
-            } else if (teamPropPosition == 3) {
-                drive(400, -1, 0, 0, fast);
-                drive(900, 0, 0, -1, fast);
-                drive(900, -1, 0, 0, fast);
             } else {
-                drive(550, -1, 0, 0, fast);
-                drive(900, 0, 0, -1, fast);
-                drive(900, -1, 0, 0, fast);
+//            drive(550, -1, 0, 0, fast);
+                drive(100, 1, 0, 0, fast);
+                drive(600, 0, 0, -1, fast);
+                drive(600, -1, 0, 0, fast);
             }
+
 
             if (teamPropPosition == 1) {
                 //left position
                 telemetry.addData("position","left");
                 telemetry.update();
-                drive(700, -1, 0, 0, fast);
+
+                drive(300, 0, 1, 0, fast);
+//                drive(175, 0, 0, 1, fast);
+//                drive(350, 0, 1, 0, fast);
+                drive(500, -1, 0, 0, fast);
                 // Deposit yellow Pixel
                 depositer.setPosition(0.85);
                 time.reset();
                 while (time.seconds() <= 3) {
                     if (time.seconds() > 2) {
-                        slidePosition = -800;
+                        slidePosition = -700;
                     }else if (time.seconds() > 1) {
                         depositerDoor.setPosition(0);
                         depositer.setPosition(0.55);
@@ -266,40 +275,39 @@ public class Blue50Point extends LinearOpMode {
                     slideMotorR.setTargetPosition(slidePosition);
                     slideMotorL.setTargetPosition(slidePosition);
                 }
-                depositerDoor.setPosition(0.05);
+                depositerDoor.setPosition(0.07);
                 time.reset();
-                while (time.seconds() <= 5) {
-                    if (time.seconds() > 4) {
+                while (time.seconds() <= 3) {
+                    if (time.seconds() > 2) {
                         depositer.setPosition(0.85);
                         slidePosition = 10;
                     }
-                    else if (time.seconds() > 3) {
+                    else if (time.seconds() > 1) {
                         depositerDoor.setPosition(0.15);
                         slidePosition = -1000;
                     }
                     else if (time.seconds() > 0) {
-                        depositerDoor.setPosition(0.05);
+                        depositerDoor.setPosition(0.07);
                     }
                     slideMotorR.setTargetPosition(slidePosition);
                     slideMotorL.setTargetPosition(slidePosition);
                 }
                 drive(200, 1, 0, 0, fast);
-                drive(725, 0, 0, -1, fast);
-                drive(850, -1, 0, 0, fast);
-
-
-
+                drive(750, 0, 0, -1, fast);
+                drive(700, -1, 0, 0, fast);
             } else if (teamPropPosition == 2) {
                 //middle position
                 telemetry.addData("position","middle");
                 telemetry.update();
-                drive(700, -1, 0, 0, fast);
+                drive(350, -1, 0, 0, fast);
+                drive(200, 0, 1, 0, fast);
+                drive(300, -1, 0, 0, fast);
                 // Deposit yellow Pixel
                 depositer.setPosition(0.85);
                 time.reset();
                 while (time.seconds() <= 3) {
                     if (time.seconds() > 2) {
-                        slidePosition = -800;
+                        slidePosition = -700;
                     }else if (time.seconds() > 1) {
                         depositerDoor.setPosition(0);
                         depositer.setPosition(0.55);
@@ -310,43 +318,41 @@ public class Blue50Point extends LinearOpMode {
                     slideMotorR.setTargetPosition(slidePosition);
                     slideMotorL.setTargetPosition(slidePosition);
                 }
-                depositerDoor.setPosition(0.05);
+                depositerDoor.setPosition(0.07);
                 time.reset();
-                while (time.seconds() <= 5) {
-                    if (time.seconds() > 4) {
+                while (time.seconds() <= 3) {
+                    if (time.seconds() > 2) {
                         depositer.setPosition(0.85);
                         slidePosition = 10;
                     }
-                    else if (time.seconds() > 3) {
+                    else if (time.seconds() > 1) {
                         depositerDoor.setPosition(0.15);
                         slidePosition = -1000;
                     }
                     else if (time.seconds() > 0) {
-                        depositerDoor.setPosition(0.05);
+                        depositerDoor.setPosition(0.07);
                     }
                     slideMotorR.setTargetPosition(slidePosition);
                     slideMotorL.setTargetPosition(slidePosition);
                 }
                 drive(200, 1, 0, 0, fast);
-                drive(725, 0, 0, -1, fast);
-                drive(1200, -1, 0, 0, fast);
-
-
+                drive(750, 0, 0, -1, fast);
+                drive(1100, -1, 0, 0, fast);
 
             } else if (teamPropPosition == 3) {
                 //right position
                 telemetry.addData("position","right");
                 telemetry.update();
                 drive(300, -1, 0, 0, fast);
-                drive(400, 0, 1, 0, fast);
+                drive(300, 0, 1, 0, fast);
                 drive(100, 0, 0, 1, fast);
-                drive(400, -1, 0, 0, fast);
+                drive(130, -1, 0, 0, fast);
                 // Deposit yellow Pixel
                 depositer.setPosition(0.85);
                 time.reset();
                 while (time.seconds() <= 3) {
                     if (time.seconds() > 2) {
-                        slidePosition = -800;
+                        slidePosition = -700;
                     }else if (time.seconds() > 1) {
                         depositerDoor.setPosition(0);
                         depositer.setPosition(0.55);
@@ -357,31 +363,226 @@ public class Blue50Point extends LinearOpMode {
                     slideMotorR.setTargetPosition(slidePosition);
                     slideMotorL.setTargetPosition(slidePosition);
                 }
-                depositerDoor.setPosition(0.05);
+                depositerDoor.setPosition(0.07);
                 time.reset();
-                while (time.seconds() <= 5) {
-                    if (time.seconds() > 4) {
+                while (time.seconds() <= 3) {
+                    if (time.seconds() > 2) {
                         depositer.setPosition(0.85);
                         slidePosition = 10;
                     }
-                    else if (time.seconds() > 3) {
+                    else if (time.seconds() > 1) {
                         depositerDoor.setPosition(0.15);
                         slidePosition = -1000;
                     }
                     else if (time.seconds() > 0) {
-                        depositerDoor.setPosition(0.05);
+                        depositerDoor.setPosition(0.07);
                     }
                     slideMotorR.setTargetPosition(slidePosition);
                     slideMotorL.setTargetPosition(slidePosition);
                 }
                 drive(200, 1, 0, 0, fast);
-                drive(725, 0, 0, -1, fast);
-                drive(1800, -1, 0, 0, fast);
-
-
+                drive(750, 0, 0, -1, fast);
+                drive(1700, -1, 0, 0, fast);
             }
 
+            telemetry.update();
 
+//            int teamPropPosition = 0;
+//            while (teamPropPosition == 0) {
+//                teamPropPosition = pipeline.getRectPos();
+//            }
+//            drive(200, -1, 0, 0, fast);
+//            drive(400, 0, -1, 0, fast);
+//
+//            teamPropPosition = pipeline.getRectPos();
+//            if (teamPropPosition == 1) {
+//                //left position
+//
+//                telemetry.addData("position", "left");
+//                telemetry.update();
+//                drive(1150, -1, 0, 0, 0.4);
+//                drive(750, 0, 0, 1, 0.2);
+//                //Deposit Purple Pixel
+//                purple.setPosition(0.5);
+//                drive(725, 0, 0, -1, 0.2);
+//
+//
+//
+//            } else if (teamPropPosition == 2) {
+//                //middle position
+//                telemetry.addData("position", "middle");
+//                telemetry.update();
+//                drive(1150, -1, 0, 0, 0.4);
+//                //Deposit Purple Pixel
+//                purple.setPosition(0.5);
+//
+//
+//
+//            } else if (teamPropPosition == 3) {
+//                //right position
+//                telemetry.addData("position", "right");
+//                telemetry.update();
+//                drive(1150, -1, 0, 0, 0.4);
+//                drive(750, 0, 0, -1, 0.2);
+//                //Deposit Purple Pixel
+//                purple.setPosition(0.5);
+//                drive(725, 0, 0, 1, 0.2);
+//
+//            }
+//
+//
+//
+//            if (teamPropPosition == 1) {
+//                drive(800, 1, 0, 0, fast);
+//                drive(850, 0, 0, -1, fast);
+//                drive(900, -1, 0, 0, fast);
+//            } else if (teamPropPosition == 3) {
+//                drive(400, -1, 0, 0, fast);
+//                drive(900, 0, 0, -1, fast);
+//                drive(900, -1, 0, 0, fast);
+//            } else {
+//                drive(550, -1, 0, 0, fast);
+//                drive(900, 0, 0, -1, fast);
+//                drive(900, -1, 0, 0, fast);
+//            }
+//
+//            if (teamPropPosition == 1) {
+//                //left position
+//                telemetry.addData("position","left");
+//                telemetry.update();
+//                drive(700, -1, 0, 0, fast);
+//                // Deposit yellow Pixel
+//                depositer.setPosition(0.85);
+//                time.reset();
+//                while (time.seconds() <= 3) {
+//                    if (time.seconds() > 2) {
+//                        slidePosition = -800;
+//                    }else if (time.seconds() > 1) {
+//                        depositerDoor.setPosition(0);
+//                        depositer.setPosition(0.55);
+//                    }else  if (time.seconds() > 0) {
+//                        depositer.setPosition(0.85);
+//                        slidePosition = -1000;
+//                    }
+//                    slideMotorR.setTargetPosition(slidePosition);
+//                    slideMotorL.setTargetPosition(slidePosition);
+//                }
+//                depositerDoor.setPosition(0.05);
+//                time.reset();
+//                while (time.seconds() <= 5) {
+//                    if (time.seconds() > 4) {
+//                        depositer.setPosition(0.85);
+//                        slidePosition = 10;
+//                    }
+//                    else if (time.seconds() > 3) {
+//                        depositerDoor.setPosition(0.15);
+//                        slidePosition = -1000;
+//                    }
+//                    else if (time.seconds() > 0) {
+//                        depositerDoor.setPosition(0.05);
+//                    }
+//                    slideMotorR.setTargetPosition(slidePosition);
+//                    slideMotorL.setTargetPosition(slidePosition);
+//                }
+//                drive(200, 1, 0, 0, fast);
+//                drive(725, 0, 0, -1, fast);
+//                drive(850, -1, 0, 0, fast);
+//
+//
+//
+//            } else if (teamPropPosition == 2) {
+//                //middle position
+//                telemetry.addData("position","middle");
+//                telemetry.update();
+//                drive(700, -1, 0, 0, fast);
+//                // Deposit yellow Pixel
+//                depositer.setPosition(0.85);
+//                time.reset();
+//                while (time.seconds() <= 3) {
+//                    if (time.seconds() > 2) {
+//                        slidePosition = -800;
+//                    }else if (time.seconds() > 1) {
+//                        depositerDoor.setPosition(0);
+//                        depositer.setPosition(0.55);
+//                    }else  if (time.seconds() > 0) {
+//                        depositer.setPosition(0.85);
+//                        slidePosition = -1000;
+//                    }
+//                    slideMotorR.setTargetPosition(slidePosition);
+//                    slideMotorL.setTargetPosition(slidePosition);
+//                }
+//                depositerDoor.setPosition(0.05);
+//                time.reset();
+//                while (time.seconds() <= 5) {
+//                    if (time.seconds() > 4) {
+//                        depositer.setPosition(0.85);
+//                        slidePosition = 10;
+//                    }
+//                    else if (time.seconds() > 3) {
+//                        depositerDoor.setPosition(0.15);
+//                        slidePosition = -1000;
+//                    }
+//                    else if (time.seconds() > 0) {
+//                        depositerDoor.setPosition(0.05);
+//                    }
+//                    slideMotorR.setTargetPosition(slidePosition);
+//                    slideMotorL.setTargetPosition(slidePosition);
+//                }
+//                drive(200, 1, 0, 0, fast);
+//                drive(725, 0, 0, -1, fast);
+//                drive(1200, -1, 0, 0, fast);
+//
+//
+//
+//            } else if (teamPropPosition == 3) {
+//                //right position
+//                telemetry.addData("position","right");
+//                telemetry.update();
+//                drive(300, -1, 0, 0, fast);
+//                drive(400, 0, 1, 0, fast);
+//                drive(100, 0, 0, 1, fast);
+//                drive(400, -1, 0, 0, fast);
+//                // Deposit yellow Pixel
+//                depositer.setPosition(0.85);
+//                time.reset();
+//                while (time.seconds() <= 3) {
+//                    if (time.seconds() > 2) {
+//                        slidePosition = -800;
+//                    }else if (time.seconds() > 1) {
+//                        depositerDoor.setPosition(0);
+//                        depositer.setPosition(0.55);
+//                    }else  if (time.seconds() > 0) {
+//                        depositer.setPosition(0.85);
+//                        slidePosition = -1000;
+//                    }
+//                    slideMotorR.setTargetPosition(slidePosition);
+//                    slideMotorL.setTargetPosition(slidePosition);
+//                }
+//                depositerDoor.setPosition(0.05);
+//                time.reset();
+//                while (time.seconds() <= 5) {
+//                    if (time.seconds() > 4) {
+//                        depositer.setPosition(0.85);
+//                        slidePosition = 10;
+//                    }
+//                    else if (time.seconds() > 3) {
+//                        depositerDoor.setPosition(0.15);
+//                        slidePosition = -1000;
+//                    }
+//                    else if (time.seconds() > 0) {
+//                        depositerDoor.setPosition(0.05);
+//                    }
+//                    slideMotorR.setTargetPosition(slidePosition);
+//                    slideMotorL.setTargetPosition(slidePosition);
+//                }
+//                drive(200, 1, 0, 0, fast);
+//                drive(725, 0, 0, -1, fast);
+//                drive(1800, -1, 0, 0, fast);
+//
+//
+//            }
+//
+//
 
         }
 
