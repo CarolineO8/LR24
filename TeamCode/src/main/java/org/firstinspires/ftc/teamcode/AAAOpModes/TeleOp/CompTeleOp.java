@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp;
 
+import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.backClawOpen;
 import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.derivative;
+import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.frontClawOpen;
 import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.integral;
 import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.proportional;
 
 
-import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -25,13 +27,19 @@ public class CompTeleOp extends BaseOpMode {
     DcMotor fr;
     DcMotor bl;
     DcMotor br;
-    Servo depositer;
-    Servo depositerDoor;
+    Servo wrist;
+    Servo leftArm;
+    Servo rightArm;
+    Servo frontClaw;
+    Servo backClaw;
+    Servo droneLauncher;
     DcMotor slideMotorL;
     DcMotor slideMotorR;
     DcMotor intakeMotor;
     Servo launcher;
+    CRServo leftConveyor;
     CRServo counterRoller;
+    CRServo rightConveyor;
 
     int slidePosition = 0;
     Gyro gyro;
@@ -51,10 +59,16 @@ public class CompTeleOp extends BaseOpMode {
         fr = BaseOpMode.hardware.get(DcMotor.class,"fr");
         br = BaseOpMode.hardware.get(DcMotor.class,"br");
         bl = BaseOpMode.hardware.get(DcMotor.class,"bl");
-        depositer = new Servo("depositer");
-        depositerDoor = new Servo("depositerDoor");
+        wrist = new Servo("wrist");
         launcher = new Servo("launcher");
-        counterRoller = BaseOpMode.hardware.crservo.get("roll");
+        leftArm = new Servo("arm1");
+        rightArm = new Servo("arm2");
+        frontClaw = new Servo("frontClaw");
+        backClaw = new Servo("backClaw");
+        droneLauncher = new Servo("launcher");
+        leftConveyor = BaseOpMode.hardware.crservo.get("leftConveyor");
+        rightConveyor = BaseOpMode.hardware.crservo.get("rightConveyor");
+        counterRoller = BaseOpMode.hardware.crservo.get("counterRoller");
         slideMotorL = BaseOpMode.hardware.get(DcMotor.class,"slideL");
         slideMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -70,6 +84,7 @@ public class CompTeleOp extends BaseOpMode {
         intakeMotor = BaseOpMode.hardware.get(DcMotor.class,"intake");
         gyro = new Gyro("imuA");
         pid = new PID(proportional,integral,derivative);
+        leftArm.pair(rightArm);
 
 
 
@@ -89,8 +104,9 @@ public class CompTeleOp extends BaseOpMode {
         double turn = driver1.rightStick.X();
 
         Vector2d driveVector = new Vector2d(strafe, drive);
-//        Vector2d rotatedVector = driveVector.rotateBy(Math.toDegrees(270-gyro.getHeading()));
+        Vector2d rotatedVector = driveVector.rotateBy(Math.toDegrees(270-gyro.getHeading()));
         Vector2d rotatedVector = driveVector;
+
 
 
         drive = rotatedVector.getY();
@@ -140,7 +156,8 @@ public class CompTeleOp extends BaseOpMode {
         //After start
         if (driver2.leftBumper.isTapped()) {
             //deposit
-            depositerDoor.setPosition(0.05);
+            backClaw.setPosition(backClawOpen);
+            frontClaw.setPosition(frontClawOpen);
             multTelemetry.addData("door", "should move");
         }
 
@@ -148,12 +165,12 @@ public class CompTeleOp extends BaseOpMode {
         if (driver2.rightBumper.isTapped() && up) {
             //transfer
             transfer = true;
-            depositer.setPosition(1);
+            wrist.setPosition(1);
             time.reset();
         }
         if (transfer) {
             if (time.seconds() > 0.5) {
-                depositerDoor.setPosition(0);
+                //transfer
                 transfer = false;
             }
         }
@@ -164,36 +181,44 @@ public class CompTeleOp extends BaseOpMode {
             //intake in
             intakeMotor.setPower(-1);
             counterRoller.setPower(-1);
+            rightConveyor.setPower(1);
+            leftConveyor.setPower(-1);
         }
+
         else if (driver2.leftTrigger.isPressed()) {
             //intake out
             intakeMotor.setPower(1);
             counterRoller.setPower(1);
+            rightConveyor.setPower(-1);
+            leftConveyor.setPower(1);
         }
+
         else {
             //stop intake
             intakeMotor.setPower(0);
             counterRoller.setPower(0);
+            rightConveyor.setPower(0);
+            leftConveyor.setPower(0);
         }
         if (driver2.triangle.isTapped() && up) {
             //initiate up
-            depositer.setPosition(0.83);
+            wrist.setPosition(0.83);
             slidesUp = true;
             time.reset();
             up = false;
             down = true;
         }
         if (driver2.touchpad.isTapped()) {
-            depositer.setPosition(0.83);
-            depositerDoor.setPosition(0.1);
+            wrist.setPosition(0.83);
+            //depositerDoor.setPosition(0.1);
         }
         if (slidesUp) {
             if (time.seconds() > 0) {
                 slidePosition = -1000;
             }
             if (time.seconds() > 1) {
-                depositerDoor.setPosition(0);
-                depositer.setPosition(0.55);
+                //depositerDoor.setPosition(0);
+                wrist.setPosition(0.55);
                 slidesUp = false;
             }
         }
@@ -206,8 +231,8 @@ public class CompTeleOp extends BaseOpMode {
         }
         if (slidesDown) {
             if (time.seconds() > 0) {
-                depositerDoor.setPosition(0.15);
-                depositer.setPosition(0.83);
+                //depositerDoor.setPosition(0.15);
+                wrist.setPosition(0.83);
             }
             if (time.seconds() > 0.5) {
                 slidePosition = 10;
