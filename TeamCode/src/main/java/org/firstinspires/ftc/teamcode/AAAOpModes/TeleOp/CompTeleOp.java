@@ -1,10 +1,16 @@
 package org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp;
 
+import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.armDown;
+import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.armUp;
+import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.backClawClosed;
 import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.backClawOpen;
 import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.derivative;
+import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.frontClawClosed;
 import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.frontClawOpen;
 import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.integral;
 import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.proportional;
+import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.wristDown;
+import static org.firstinspires.ftc.teamcode.AAAOpModes.TeleOp.Dashboard.wristUp;
 
 
 import com.arcrobotics.ftclib.geometry.Vector2d;
@@ -61,7 +67,7 @@ public class CompTeleOp extends BaseOpMode {
         bl = BaseOpMode.hardware.get(DcMotor.class,"bl");
         wrist = new Servo("wrist");
         launcher = new Servo("launcher");
-        leftArm = new Servo("arm1");
+        leftArm = new Servo("arm1",true);
         rightArm = new Servo("arm2");
         frontClaw = new Servo("frontClaw");
         backClaw = new Servo("backClaw");
@@ -84,7 +90,12 @@ public class CompTeleOp extends BaseOpMode {
         intakeMotor = BaseOpMode.hardware.get(DcMotor.class,"intake");
         gyro = new Gyro("imuA");
         pid = new PID(proportional,integral,derivative);
-        leftArm.pair(rightArm);
+        //frontClaw.setPosition(frontClawOpen);
+        //backClaw.setPosition(backClawOpen);
+        rightArm.setPosition(armDown);
+        leftArm.setPosition(armDown);
+        wrist.setPosition(wristDown);
+
 
 
 
@@ -105,7 +116,7 @@ public class CompTeleOp extends BaseOpMode {
 
         Vector2d driveVector = new Vector2d(strafe, drive);
         Vector2d rotatedVector = driveVector.rotateBy(Math.toDegrees(270-gyro.getHeading()));
-        Vector2d rotatedVector = driveVector;
+//        Vector2d rotatedVector = driveVector;
 
 
 
@@ -164,11 +175,15 @@ public class CompTeleOp extends BaseOpMode {
         //LOOK HERE!!!!!!!!!!!!!!!
         if (driver2.rightBumper.isTapped() && up) {
             //transfer
+            wrist.setPosition(wristDown);
+            //leftArm.setPosition(armDown);
+            //rightArm.setPosition(armDown);
             transfer = true;
-            wrist.setPosition(1);
             time.reset();
         }
         if (transfer) {
+            backClaw.setPosition(backClawClosed);
+            frontClaw.setPosition(frontClawClosed);
             if (time.seconds() > 0.5) {
                 //transfer
                 transfer = false;
@@ -189,8 +204,6 @@ public class CompTeleOp extends BaseOpMode {
             //intake out
             intakeMotor.setPower(1);
             counterRoller.setPower(1);
-            rightConveyor.setPower(-1);
-            leftConveyor.setPower(1);
         }
 
         else {
@@ -200,28 +213,20 @@ public class CompTeleOp extends BaseOpMode {
             rightConveyor.setPower(0);
             leftConveyor.setPower(0);
         }
-        if (driver2.triangle.isTapped() && up) {
+        if (driver2.triangle.isTapped()) {
             //initiate up
-            wrist.setPosition(0.83);
+            wrist.setPosition(wristUp);
+            rightArm.setPosition(armUp);
+            leftArm.setPosition(armUp);
             slidesUp = true;
             time.reset();
             up = false;
             down = true;
         }
-        if (driver2.touchpad.isTapped()) {
-            wrist.setPosition(0.83);
+        if (driver2.share.isTapped()) {
             //depositerDoor.setPosition(0.1);
         }
-        if (slidesUp) {
-            if (time.seconds() > 0) {
-                slidePosition = -1000;
-            }
-            if (time.seconds() > 1) {
-                //depositerDoor.setPosition(0);
-                wrist.setPosition(0.55);
-                slidesUp = false;
-            }
-        }
+
         if (driver2.cross.isTapped() && down) {
             //initiate down
             up = true;
@@ -232,10 +237,12 @@ public class CompTeleOp extends BaseOpMode {
         if (slidesDown) {
             if (time.seconds() > 0) {
                 //depositerDoor.setPosition(0.15);
-                wrist.setPosition(0.83);
             }
             if (time.seconds() > 0.5) {
                 slidePosition = 10;
+                rightArm.setPosition(armDown);
+                leftArm.setPosition(armDown);
+                wrist.setPosition(wristDown);
                 slidesDown = false;
             }
         }
