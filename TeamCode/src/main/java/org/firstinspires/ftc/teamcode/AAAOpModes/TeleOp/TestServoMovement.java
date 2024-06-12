@@ -115,6 +115,7 @@ public class TestServoMovement extends BaseOpMode {
             }
             if (time.seconds() > 1) {
                 depositer.setPosition(0.6);
+
                 slidesUp = false;
             }
         }

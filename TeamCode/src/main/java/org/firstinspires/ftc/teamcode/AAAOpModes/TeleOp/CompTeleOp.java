@@ -52,6 +52,7 @@ public class CompTeleOp extends BaseOpMode {
     PID pid;
 
     ElapsedTime time = new ElapsedTime();
+    ElapsedTime timer = new ElapsedTime();
 
 
     boolean pid_on = false;
@@ -214,10 +215,34 @@ public class CompTeleOp extends BaseOpMode {
             leftConveyor.setPower(0);
         }
         if (driver2.triangle.isTapped()) {
+
+            boolean wrist1 = false;
+            boolean wrist2 = false;
             //initiate up
-            wrist.setPosition(wristUp);
+          rightArm.setPosition(0.89);
+            leftArm.setPosition(0.89);
+            wrist.setPosition(0.44);
+            wrist1 = true;
+            if(wrist1){
+                rightArm.setPosition(0.64);
+                leftArm.setPosition(0.64);
+                wrist.setPosition(0.38);
+                wrist2 = true;
+            }
+            if (wrist2){
+                rightArm.setPosition(0.37);
+                leftArm.setPosition(0.37);
+                wrist.setPosition(0.327);
+            }
+
+           /* rightArm.setPosition(0.5);
+            leftArm.setPosition(0.5);*/
+          //  wrist.setPosition(0.02);
+
+
+          /*  wrist.setPosition(wristUp);
             rightArm.setPosition(armUp);
-            leftArm.setPosition(armUp);
+            leftArm.setPosition(armUp);*/
             slidesUp = true;
             time.reset();
             up = false;
