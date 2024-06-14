@@ -58,6 +58,8 @@ public class CompTeleOp extends BaseOpMode {
     boolean pid_on = false;
     boolean pid_on_last_cycle = false;
     double setPoint = 0;
+    boolean wrist2 = false;
+    boolean wrist1 = false;
 
     @Override
     public void externalInit() {
@@ -91,8 +93,8 @@ public class CompTeleOp extends BaseOpMode {
         intakeMotor = BaseOpMode.hardware.get(DcMotor.class,"intake");
         gyro = new Gyro("imuA");
         pid = new PID(proportional,integral,derivative);
-        //frontClaw.setPosition(frontClawOpen);
-        //backClaw.setPosition(backClawOpen);
+        frontClaw.setPosition(frontClawOpen);
+        backClaw.setPosition(backClawOpen);
         rightArm.setPosition(armDown);
         leftArm.setPosition(armDown);
         wrist.setPosition(wristDown);
@@ -170,7 +172,7 @@ public class CompTeleOp extends BaseOpMode {
             //deposit
             backClaw.setPosition(backClawOpen);
             frontClaw.setPosition(frontClawOpen);
-            multTelemetry.addData("door", "should move");
+
         }
 
         //LOOK HERE!!!!!!!!!!!!!!!
@@ -215,9 +217,9 @@ public class CompTeleOp extends BaseOpMode {
             leftConveyor.setPower(0);
         }
         if (driver2.triangle.isTapped()) {
+if (!wrist2){
 
-            boolean wrist1 = false;
-            boolean wrist2 = false;
+
             //initiate up
           rightArm.setPosition(0.89);
             leftArm.setPosition(0.89);
@@ -235,42 +237,47 @@ public class CompTeleOp extends BaseOpMode {
                 wrist.setPosition(0.327);
             }
 
-           /* rightArm.setPosition(0.5);
-            leftArm.setPosition(0.5);*/
-          //  wrist.setPosition(0.02);
-
-
-          /*  wrist.setPosition(wristUp);
-            rightArm.setPosition(armUp);
-            leftArm.setPosition(armUp);*/
             slidesUp = true;
             time.reset();
             up = false;
             down = true;
-        }
+        }}
         if (driver2.share.isTapped()) {
             //depositerDoor.setPosition(0.1);
         }
 
-        if (driver2.cross.isTapped() && down) {
+        if (driver2.circle.isTapped()/* && down*/) {
             //initiate down
+            if(wrist2){
             up = true;
             down = false;
             slidesDown = true;
             time.reset();
-        }
+
         if (slidesDown) {
-            if (time.seconds() > 0) {
-                //depositerDoor.setPosition(0.15);
-            }
-            if (time.seconds() > 0.5) {
+
                 slidePosition = 10;
+                wrist.setPosition(0.38);
+                wrist2 = false;
+                if(!wrist2){
+                    rightArm.setPosition(0.64);
+                    leftArm.setPosition(0.64);
+                    wrist.setPosition(0.44);
+
+
+                wrist1 = false;}
+                if (!wrist1){
+                    rightArm.setPosition(0.89);
+                    leftArm.setPosition(0.89);
+                    wrist.setPosition(wristDown);
+                    
                 rightArm.setPosition(armDown);
                 leftArm.setPosition(armDown);
-                wrist.setPosition(wristDown);
+
                 slidesDown = false;
+                wrist2 = false;
             }
-        }
+        }}}
         if (driver2.dpad_up.isTapped() && slidePosition >= -1000){
             slidePosition -= 100;
         }
